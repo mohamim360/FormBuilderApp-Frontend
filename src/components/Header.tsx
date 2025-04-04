@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { Button, Modal } from "react-bootstrap";
+
 type User = {
   name: string;
   email: string;
@@ -11,6 +14,8 @@ type HeaderProps = {
 };
 
 export const Header = ({ user, onSignIn, onSignOut }: HeaderProps) => {
+
+	const [showProfileModal, setShowProfileModal] = useState(false);
   // Generate initials-based avatar if no image URL provided
   const getAvatar = () => {
     if (user?.avatarUrl) return user.avatarUrl;
@@ -23,7 +28,8 @@ export const Header = ({ user, onSignIn, onSignOut }: HeaderProps) => {
   };
 
   return (
-    <nav className="navbar bg-body-tertiary navbar-expand-lg">
+   <>
+	  <nav className="navbar bg-body-tertiary navbar-expand-lg">
       <div className="container-fluid">
         {/* Logo */}
         <a className="navbar-brand" href="#">
@@ -57,13 +63,10 @@ export const Header = ({ user, onSignIn, onSignOut }: HeaderProps) => {
 
           {/* Conditional: Avatar or Sign In */}
           {user ? (
-            <li className="nav-item dropdown">
-              <a
-                className="nav-link d-flex align-items-center"
-                href="#"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
+            <li className="nav-item">
+              <button
+                className="nav-link d-flex align-items-center bg-transparent border-0"
+								onClick={() => setShowProfileModal(true)}
               >
                 <img
                   src={getAvatar()}
@@ -73,14 +76,7 @@ export const Header = ({ user, onSignIn, onSignOut }: HeaderProps) => {
                   height="32"
                 />
                 <span className="d-none d-lg-inline">{user.name}</span>
-              </a>
-              <ul className="dropdown-menu dropdown-menu-end">
-                <li>
-                  <button className="dropdown-item" onClick={onSignOut}>
-                    Sign Out
-                  </button>
-                </li>
-              </ul>
+              </button>
             </li>
           ) : (
             <li className="nav-item">
@@ -92,5 +88,34 @@ export const Header = ({ user, onSignIn, onSignOut }: HeaderProps) => {
         </ul>
       </div>
     </nav>
+
+		  {/* Profile Modal */}
+      {user && (
+        <Modal show={showProfileModal} onHide={() => setShowProfileModal(false)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>User Profile</Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="text-center">
+            <img
+              src={getAvatar()}
+              alt="avatar"
+              className="rounded-circle mb-3"
+              width="80"
+              height="80"
+            />
+            <h5>{user.name}</h5>
+            <p className="text-muted">{user.email}</p>
+          </Modal.Body>
+          <Modal.Footer className="justify-content-center">
+            <Button variant="secondary" onClick={() => setShowProfileModal(false)}>
+              Close
+            </Button>
+            <Button variant="danger" onClick={onSignOut}>
+              Sign Out
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
+	 </>
   );
 };
