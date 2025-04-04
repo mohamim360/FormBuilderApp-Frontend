@@ -1,15 +1,20 @@
 
+import { BrowserRouter } from 'react-router-dom'
 import './App.css'
+import { Header } from './components/Header'
+
 
 function App() {
 
-
   return (
-    <>
-      <div className="container mt-5">
-        <h1>Hello, world 👋</h1>
-      </div>
-    </>
+    <BrowserRouter>
+      <Header
+        user={{ name: 'Alice', email: 'alice@example.com' }}
+        onSignIn={() => console.log("Sign In Clicked")}
+        onSignOut={() => console.log("Sign Out Clicked")}
+      />
+
+    </BrowserRouter>
   )
 }
 
