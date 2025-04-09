@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 type User = {
   name: string;
@@ -80,9 +81,9 @@ export const Header = ({ user, onSignIn, onSignOut }: HeaderProps) => {
             </li>
           ) : (
             <li className="nav-item">
-              <button className="btn btn-primary ms-2" onClick={onSignIn}>
-                Sign In
-              </button>
+              <Link to="/login" className="btn btn-primary ms-2" onClick={onSignIn}>
+                Log In
+              </Link>
             </li>
           )}
         </ul>

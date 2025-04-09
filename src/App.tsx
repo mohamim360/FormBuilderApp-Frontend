@@ -1,19 +1,27 @@
 
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
-import { Header } from './components/Header'
-
+import LoginForm from './pages/LoginForm'
+import RegisterForm from './pages/RegisterForm'
+import MainLayout from './Layouts/MainLayout'
+import AuthLayout from './Layouts/AuthLayout'
 
 function App() {
 
   return (
     <BrowserRouter>
-      <Header
-        user={{ name: 'Alice', email: 'alice@example.com' }}
-        onSignIn={() => console.log("Sign In Clicked")}
-        onSignOut={() => console.log("Sign Out Clicked")}
-      />
+      <Routes>
 
+        <Route element={<MainLayout />}>
+          <Route path="/" />
+        </Route>
+
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
+        </Route>
+
+      </Routes>
     </BrowserRouter>
   )
 }
