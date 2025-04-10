@@ -5,7 +5,12 @@ import { Link } from 'react-router-dom'
 const RegisterForm: React.FC = () => {
 	return (
 		<Container className="d-flex justify-content-center align-items-center bg-light" style={{ minHeight: '100vh' }}>
-			<Card className="shadow-lg border-0 w-100" style={{ maxWidth: '420px', borderRadius: '20px' }}>
+			<div className="position-absolute top-0 start-50 translate-middle-x mt-4">
+				<Link to="/" className="btn btn-outline-primary rounded-pill px-4 shadow-sm">
+					⬅ Back to Home
+				</Link>
+			</div>
+			<Card className="shadow-lg border-0 w-100 mt-4" style={{ maxWidth: '420px', borderRadius: '20px' }}>
 				<Card.Body className="p-4">
 					<h2 className="text-center mb-3" style={{ fontWeight: 700 }}>Create Account</h2>
 					<p className="text-center text-muted mb-4" style={{ fontSize: '0.95rem' }}>
