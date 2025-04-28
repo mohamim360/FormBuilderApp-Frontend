@@ -1,0 +1,106 @@
+// src/services/template.service.ts
+import axios from 'axios';
+import { Template } from '../types';
+
+const API_BASE_URL = 'http://localhost:5000/api/templates';
+
+export const TemplateService = {
+  async createTemplate(templateData: any) {
+    try {
+      const response = await axios.post(API_BASE_URL, templateData);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating template:', error);
+      throw error;
+    }
+  },
+
+  async updateTemplate(id: string, templateData: any) {
+    try {
+      const response = await axios.put(`${API_BASE_URL}/${id}`, templateData);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating template:', error);
+      throw error;
+    }
+  },
+
+  async getTemplate(id: string) {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching template:', error);
+      throw error;
+    }
+  },
+
+  async deleteTemplate(id: string) {
+    try {
+      await axios.delete(`${API_BASE_URL}/${id}`);
+    } catch (error) {
+      console.error('Error deleting template:', error);
+      throw error;
+    }
+  },
+
+  async getUserTemplates() {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/user/templates`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user templates:', error);
+      throw error;
+    }
+  },
+	async searchTemplates(query: string, page: number = 1, limit: number = 8): Promise<{ 
+    templates: Template[], 
+    total: number 
+  }> {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/search`, {
+        params: { q: query, page, limit }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error searching templates:', error);
+      throw error;
+    }
+  },
+
+  async getLatestTemplates(limit: number = 4): Promise<Template[]> {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/latest`, {
+        params: { limit }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching latest templates:', error);
+      throw error;
+    }
+  },
+
+  async getPopularTemplates(limit: number = 4): Promise<Template[]> {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/popular`, {
+        params: { limit }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching popular templates:', error);
+      throw error;
+    }
+		
+  },
+async getPopularTags(limit: number = 50): Promise<{ id: string; name: string; count: number }[]> {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/tags/popular`, {
+      params: { limit },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching popular tags:', error);
+    throw error;
+  }
+},
+};
