@@ -7,9 +7,24 @@ import {
   Badge,
   Spinner,
   Alert,
+  Row,
+  Col,
+  ProgressBar,
+  Stack,
+  Placeholder
 } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import { MdSend } from 'react-icons/md';
+import { 
+  MdSend, 
+  MdOutlineDescription, 
+  MdCheckCircle,
+  MdOutlineImage,
+  MdOutlineNumbers,
+  MdOutlineShortText,
+  MdOutlineSubject,
+  MdOutlineCheckBox,
+  MdOutlineRadioButtonChecked
+} from 'react-icons/md';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchTemplateById, submitForm } from '../services/formService';
 import { Template, QuestionType } from '../types/types';
@@ -22,6 +37,14 @@ type FormValues = {
   emailCopy: boolean;
 };
 
+const questionTypeIcons = {
+  [QuestionType.SINGLE_LINE_TEXT]: <MdOutlineShortText className="text-primary" />,
+  [QuestionType.MULTI_LINE_TEXT]: <MdOutlineSubject className="text-primary" />,
+  [QuestionType.INTEGER]: <MdOutlineNumbers className="text-primary" />,
+  [QuestionType.CHECKBOX]: <MdOutlineCheckBox className="text-primary" />,
+  [QuestionType.SINGLE_CHOICE]: <MdOutlineRadioButtonChecked className="text-primary" />,
+};
+
 const FormPreview: React.FC = () => {
   const { templateId } = useParams<{ templateId: string }>();
   const navigate = useNavigate();
@@ -29,13 +52,15 @@ const FormPreview: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     reset,
-  } = useForm<FormValues>();
+    watch
+  } = useForm<FormValues>({ mode: 'onChange' });
 
   useEffect(() => {
     const loadTemplate = async () => {
@@ -115,12 +140,160 @@ const FormPreview: React.FC = () => {
         sendEmailCopy: data.emailCopy,
       };
 
-      const createdForm = await submitForm(formData);
-      navigate(`/forms/${createdForm.id}/success`);
+      await submitForm(formData);
+      setShowSuccess(true);
+      setTimeout(() =>   navigate(`/forms/${formData.templateId}/success`), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Form submission failed');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const renderQuestionInput = (question: any, index: number) => {
+    const commonProps = {
+      key: question.id,
+      className: "mb-3",
+      isInvalid: !!errors.answers?.[index]?.value,
+      ...register(`answers.${index}.value`, {
+        required: question.isRequired && 'This field is required',
+      })
+    };
+
+    const questionHeader = (
+      <div className="d-flex align-items-center mb-2">
+        <span className="me-2">
+          {questionTypeIcons[question.type as QuestionType] || <MdOutlineDescription />}
+        </span>
+        <h5 className="mb-0">
+          {question.title} 
+          {question.isRequired && <span className="text-danger ms-1">*</span>}
+        </h5>
+      </div>
+    );
+
+    switch (question.type) {
+      case QuestionType.SINGLE_LINE_TEXT:
+        return (
+          <div className="mb-4">
+            {questionHeader}
+            {question.description && (
+              <p className="text-muted small mb-2">
+                <MdOutlineDescription className="me-1" />
+                {question.description}
+              </p>
+            )}
+            <Form.Control
+              type="text"
+              placeholder="Type your answer here..."
+              {...commonProps}
+              className="border-2 py-3"
+            />
+          </div>
+        );
+
+      case QuestionType.MULTI_LINE_TEXT:
+        return (
+          <div className="mb-4">
+            {questionHeader}
+            {question.description && (
+              <p className="text-muted small mb-2">
+                <MdOutlineDescription className="me-1" />
+                {question.description}
+              </p>
+            )}
+            <Form.Control
+              as="textarea"
+              rows={4}
+              placeholder="Type your detailed answer here..."
+              {...commonProps}
+              className="border-2"
+              style={{ minHeight: '120px' }}
+            />
+          </div>
+        );
+
+      case QuestionType.INTEGER:
+        return (
+          <div className="mb-4">
+            {questionHeader}
+            {question.description && (
+              <p className="text-muted small mb-2">
+                <MdOutlineDescription className="me-1" />
+                {question.description}
+              </p>
+            )}
+            <Form.Control
+              type="number"
+              min="0"
+              placeholder="Enter a number..."
+              {...register(`answers.${index}.value`, {
+                required: question.isRequired && 'This field is required',
+                valueAsNumber: true,
+                min: { value: 0, message: 'Must be a positive number' },
+              })}
+              isInvalid={!!errors.answers?.[index]?.value}
+              className="border-2 py-3"
+            />
+          </div>
+        );
+
+      case QuestionType.CHECKBOX:
+        return (
+          <div className="mb-4">
+            {questionHeader}
+            {question.description && (
+              <p className="text-muted small mb-2">
+                <MdOutlineDescription className="me-1" />
+                {question.description}
+              </p>
+            )}
+            <div className="border rounded p-3 bg-light bg-opacity-10">
+              {question.options?.map((option, optIndex) => (
+                <Form.Check
+                  key={optIndex}
+                  type="checkbox"
+                  id={`${question.id}-${optIndex}`}
+                  label={option}
+                  value={option}
+                  {...register(`answers.${index}.value.${optIndex}`)}
+                  className="mb-2 py-1"
+                />
+              ))}
+            </div>
+          </div>
+        );
+
+      case QuestionType.SINGLE_CHOICE:
+        return (
+          <div className="mb-4">
+            {questionHeader}
+            {question.description && (
+              <p className="text-muted small mb-2">
+                <MdOutlineDescription className="me-1" />
+                {question.description}
+              </p>
+            )}
+            <div className="border rounded p-3 bg-light bg-opacity-10">
+              {question.options?.map((option, optIndex) => (
+                <Form.Check
+                  key={optIndex}
+                  type="radio"
+                  id={`${question.id}-${optIndex}`}
+                  label={option}
+                  value={option}
+                  {...register(`answers.${index}.value`, {
+                    required: question.isRequired && 'Please select an option',
+                  })}
+                  className="mb-2 py-1"
+                />
+              ))}
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
     }
   };
 
@@ -134,170 +307,205 @@ const FormPreview: React.FC = () => {
 
   if (loading) {
     return (
-      <Container className="text-center my-5">
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
+      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
+        <Card className="border-0 shadow-sm p-4" style={{ width: '100%', maxWidth: '800px' }}>
+          <Placeholder as={Card.Header} animation="glow">
+            <Placeholder xs={6} size="lg" bg="secondary" />
+          </Placeholder>
+          <Card.Body>
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="mb-4">
+                <Placeholder as="h5" animation="glow">
+                  <Placeholder xs={8} bg="secondary" />
+                </Placeholder>
+                <Placeholder as="p" animation="glow">
+                  <Placeholder xs={12} bg="light" />
+                </Placeholder>
+                <Placeholder as={Form.Control} animation="glow" bg="light" />
+              </div>
+            ))}
+          </Card.Body>
+        </Card>
       </Container>
     );
   }
 
   if (error) {
     return (
-      <Container className="my-5">
-        <Alert variant="danger">{error}</Alert>
+      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
+        <Alert variant="danger" className="shadow-lg border-0" style={{ maxWidth: '600px' }}>
+          <div className="d-flex">
+            <div className="flex-shrink-0 me-3">
+              <div className="bg-danger bg-opacity-10 p-3 rounded-circle">
+                <MdCheckCircle size={24} className="text-danger" />
+              </div>
+            </div>
+            <div>
+              <h4 className="alert-heading">Error loading form</h4>
+              <p>{error}</p>
+              <hr />
+              <div className="d-flex justify-content-end">
+                <Button 
+                  variant="outline-danger" 
+                  onClick={() => window.location.reload()}
+                  className="rounded-pill px-4"
+                >
+                  Try Again
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Alert>
       </Container>
     );
   }
 
   if (!template) {
     return (
-      <Container className="my-5">
-        <Alert variant="warning">Template not found</Alert>
+      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
+        <Alert variant="warning" className="shadow-lg border-0" style={{ maxWidth: '600px' }}>
+          <div className="d-flex">
+            <div className="flex-shrink-0 me-3">
+              <div className="bg-warning bg-opacity-10 p-3 rounded-circle">
+                <MdOutlineImage size={24} className="text-warning" />
+              </div>
+            </div>
+            <div>
+              <h4 className="alert-heading">Template not found</h4>
+              <p>The requested form template could not be found.</p>
+              <hr />
+              <div className="d-flex justify-content-end">
+                <Button 
+                  variant="outline-warning" 
+                  onClick={() => navigate('/')}
+                  className="rounded-pill px-4"
+                >
+                  Back to Home
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Alert>
+      </Container>
+    );
+  }
+
+  if (showSuccess) {
+    return (
+      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
+        <Alert variant="success" className="shadow-lg border-0" style={{ maxWidth: '600px' }}>
+          <div className="d-flex">
+            <div className="flex-shrink-0 me-3">
+              <div className="bg-success bg-opacity-10 p-3 rounded-circle">
+                <MdCheckCircle size={24} className="text-success" />
+              </div>
+            </div>
+            <div>
+              <h4 className="alert-heading">Form Submitted Successfully!</h4>
+              <p>Thank you for your submission. You'll be redirected shortly.</p>
+              <ProgressBar now={100} animated variant="success" className="my-3" />
+            </div>
+          </div>
+        </Alert>
       </Container>
     );
   }
 
   return (
-    <Container className="my-4">
-      <Card>
-        <Card.Header className="bg-light">
-          <h2>{template.title}</h2>
-          {template.imageUrl && (
-            <div className="text-center my-3">
-              <img
-                src={template.imageUrl}
-                alt="Form header"
-                style={{ maxHeight: '200px', maxWidth: '100%' }}
-                className="img-fluid"
-              />
-            </div>
-          )}
-          {template.description && <p className="mb-3">{template.description}</p>}
-          <div className="mb-2">
-            {(template.tags || []).map((tag, index) => (
-              <Badge key={index} bg="secondary" className="me-1">
-                {renderTag(tag)}
-              </Badge>
-            ))}
-          </div>
-        </Card.Header>
+    <Container className="py-5">
+      <Row className="justify-content-center">
+        <Col lg={8} xl={7} xxl={6}>
+          <Card className="border-0 shadow-lg overflow-hidden">
+            {template.imageUrl && (
+              <div className="position-relative" style={{ height: '200px', overflow: 'hidden' }}>
+                <img
+                  src={template.imageUrl}
+                  alt="Form header"
+                  className="w-100 h-100 object-fit-cover"
+                />
+                <div className="position-absolute bottom-0 start-0 p-3 bg-dark bg-opacity-50 w-100">
+                  <h1 className="text-white mb-0">{template.title}</h1>
+                </div>
+              </div>
+            )}
+            
+            {!template.imageUrl && (
+              <Card.Header className="bg-primary bg-opacity-10 py-4 border-bottom-0">
+                <h1 className="h2 mb-0 text-center">{template.title}</h1>
+              </Card.Header>
+            )}
 
-        <Card.Body>
-          <Form onSubmit={handleSubmit(onSubmit)}>
-            {template.questions.map((question, index) => (
-              <Form.Group key={question.id} className="mb-4">
-                <Form.Label>
-                  {question.title} {question.isRequired && <span className="text-danger">*</span>}
-                </Form.Label>
-                {question.description && (
-                  <Form.Text className="d-block text-muted mb-2">
-                    {question.description}
-                  </Form.Text>
+            <Card.Body className="p-4 p-md-5">
+              <Stack gap={4}>
+                {template.description && (
+                  <Alert variant="light" className="border-start border-3 border-primary">
+                    <p className="mb-0 fw-light">
+                      <MdOutlineDescription className="me-2" size={20} />
+                      {template.description}
+                    </p>
+                  </Alert>
                 )}
 
-                {question.type === QuestionType.SINGLE_LINE_TEXT && (
-                  <Form.Control
-                    type="text"
-                    placeholder="Your answer"
-                    {...register(`answers.${index}.value`, {
-                      required: question.isRequired && 'This field is required',
-                    })}
-                    isInvalid={!!errors.answers?.[index]?.value}
-                  />
+                {(template.tags || []).length > 0 && (
+                  <div className="d-flex flex-wrap gap-2">
+                    {(template.tags || []).map((tag, index) => (
+                      <Badge key={index} bg="light" text="dark" className="rounded-pill px-3 py-2">
+                        {renderTag(tag)}
+                      </Badge>
+                    ))}
+                  </div>
                 )}
 
-                {question.type === QuestionType.MULTI_LINE_TEXT && (
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    placeholder="Your answer"
-                    {...register(`answers.${index}.value`, {
-                      required: question.isRequired && 'This field is required',
-                    })}
-                    isInvalid={!!errors.answers?.[index]?.value}
-                  />
-                )}
+                <Form onSubmit={handleSubmit(onSubmit)}>
+                  <Stack gap={4}>
+                    {template.questions.map((question, index) => (
+                      <div key={question.id}>
+                        {renderQuestionInput(question, index)}
+                        
+                        {errors.answers?.[index]?.value && (
+                          <Alert variant="danger" className="py-2 small mb-0">
+                            {errors.answers[index]?.value?.message}
+                          </Alert>
+                        )}
+                      </div>
+                    ))}
 
-                {question.type === QuestionType.INTEGER && (
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    placeholder="Your answer"
-                    {...register(`answers.${index}.value`, {
-                      required: question.isRequired && 'This field is required',
-                      valueAsNumber: true,
-                      min: { value: 0, message: 'Must be a positive number' },
-                    })}
-                    isInvalid={!!errors.answers?.[index]?.value}
-                  />
-                )}
-
-                {question.type === QuestionType.CHECKBOX && question.options && (
-                  <div>
-                    {question.options.map((option, optIndex) => (
+                    <div className="d-flex justify-content-between align-items-center mt-4 pt-4 border-top">
                       <Form.Check
-                        key={optIndex}
                         type="checkbox"
-                        id={`${question.id}-${optIndex}`}
-                        label={option}
-                        value={option}
-                        {...register(`answers.${index}.value.${optIndex}`)}
-                        className="mb-2"
+                        id="emailCopy"
+                        label="Email me a copy of my responses"
+                        {...register('emailCopy')}
+                        className="form-switch"
                       />
-                    ))}
-                  </div>
-                )}
-
-                {question.type === QuestionType.SINGLE_CHOICE && question.options && (
-                  <div>
-                    {question.options.map((option, optIndex) => (
-                      <Form.Check
-                        key={optIndex}
-                        type="radio"
-                        id={`${question.id}-${optIndex}`}
-                        label={option}
-                        value={option}
-                        {...register(`answers.${index}.value`, {
-                          required: question.isRequired && 'Please select an option',
-                        })}
-                        className="mb-2"
-                      />
-                    ))}
-                  </div>
-                )}
-
-                {errors.answers?.[index]?.value && (
-                  <Form.Control.Feedback type="invalid">
-                    {errors.answers[index]?.value?.message}
-                  </Form.Control.Feedback>
-                )}
-              </Form.Group>
-            ))}
-
-            <div className="d-flex justify-content-between mt-4">
-              <Form.Check
-                type="checkbox"
-                id="emailCopy"
-                label="Email me a copy of my responses"
-                {...register('emailCopy')}
-              />
-              <Button variant="primary" type="submit" disabled={submitting}>
-                {submitting ? (
-                  <>
-                    <Spinner as="span" size="sm" animation="border" role="status" />
-                    <span className="ms-2">Submitting...</span>
-                  </>
-                ) : (
-                  <>
-                    <MdSend /> Submit
-                  </>
-                )}
-              </Button>
-            </div>
-          </Form>
-        </Card.Body>
-      </Card>
+                      
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        disabled={submitting || !isValid}
+                        className="rounded-pill px-4 py-2 d-flex align-items-center"
+                        size="lg"
+                      >
+                        {submitting ? (
+                          <>
+                            <Spinner as="span" animation="border" size="sm" className="me-2" />
+                            Submitting...
+                          </>
+                        ) : (
+                          <>
+                            <MdSend className="me-2" />
+                            Submit Form
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </Stack>
+                </Form>
+              </Stack>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </Container>
   );
 };

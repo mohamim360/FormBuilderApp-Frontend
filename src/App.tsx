@@ -28,20 +28,11 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/templates/search" element={<SearchResultsPage />} />
             <Route path="/:templateId" element={<PublicTemplateView />} />
-          </Route>
-
-          <Route element={<AuthLayout />}>
-
-            <Route path="/login" element={<LoginForm />} />
-
-            <Route path="/register" element={<RegisterForm />} />
-
             <Route path="/templates/:templateId" element={
               <PrivateRoute>
                 <FormPreview />
               </PrivateRoute>
             } />
-
             <Route path="/forms" element={
               <PrivateRoute>
                 <FormList />
@@ -56,7 +47,15 @@ function App() {
 
             <Route path="/template" element={<PrivateRoute>
               <TemplateEditor />
-              </PrivateRoute>} />
+            </PrivateRoute>} />
+          </Route>
+
+          <Route element={<AuthLayout />}>
+
+            <Route path="/login" element={<LoginForm />} />
+
+            <Route path="/register" element={<RegisterForm />} />
+
           </Route>
 
         </Routes>
