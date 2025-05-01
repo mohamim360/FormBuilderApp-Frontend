@@ -1,3 +1,5 @@
+       
+       
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
@@ -29,10 +31,10 @@ function App() {
           </Route>
 
           <Route element={<AuthLayout />}>
+
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegisterForm />} />
-          </Route>
-          <Route path="/templates/:templateId" element={
+            <Route path="/templates/:templateId" element={
             <PrivateRoute>
               <FormPreview />
             </PrivateRoute>
@@ -50,6 +52,8 @@ function App() {
             </PrivateRoute>
           } />
           <Route path="/template" element={<PrivateRoute><TemplateEditor /></PrivateRoute>} />
+          </Route>
+
         </Routes>
       </AuthProvider>
 

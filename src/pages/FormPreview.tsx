@@ -12,7 +12,15 @@ import { useForm } from 'react-hook-form';
 import { MdSend } from 'react-icons/md';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchTemplateById, submitForm } from '../services/formService';
-import { Template, Answer } from '../types/types';
+import { Template, QuestionType } from '../types/types';
+
+type FormValues = {
+  answers: Array<{
+    questionId: string;
+    value: string | number | string[] | boolean;
+  }>;
+  emailCopy: boolean;
+};
 
 const FormPreview: React.FC = () => {
   const { templateId } = useParams<{ templateId: string }>();
@@ -27,8 +35,7 @@ const FormPreview: React.FC = () => {
     handleSubmit,
     formState: { errors },
     reset,
-    watch,
-  } = useForm<{ answers: Answer[]; emailCopy: boolean }>();
+  } = useForm<FormValues>();
 
   useEffect(() => {
     const loadTemplate = async () => {
@@ -41,7 +48,7 @@ const FormPreview: React.FC = () => {
         reset({
           answers: data.questions.map((q) => ({
             questionId: q.id,
-            value: q.type === 'CHECKBOX' ? [] : '',
+            value: q.type === QuestionType.CHECKBOX ? [] : '',
           })),
           emailCopy: false,
         });
@@ -55,39 +62,59 @@ const FormPreview: React.FC = () => {
     loadTemplate();
   }, [templateId, reset]);
 
-  const onSubmit = async (data: { answers: Answer[]; emailCopy: boolean }) => {
+  const onSubmit = async (data: FormValues) => {
     if (!template) return;
-  
+
     try {
       setSubmitting(true);
-      const formAnswers = template.questions.map((question, index) => {
-        const answer = data.answers[index];
-        const base = { questionId: question.id };
-  
+      
+      const answers = template.questions.map((question) => {
+        const answer = data.answers.find(a => a.questionId === question.id);
+        
+        const baseAnswer = {
+          questionId: question.id,
+          textValue: null,
+          integerValue: null,
+          booleanValue: null,
+        };
+
+        if (!answer) return baseAnswer;
+
         switch (question.type) {
-          case 'INTEGER':
-            return { ...base, numericValue: Number(answer?.value) || 0 };
-          case 'CHECKBOX':
-            // For checkbox, we need to handle array values
-            const checkboxValue = Array.isArray(answer?.value) 
-              ? answer.value.join(', ') 
-              : answer?.value || '';
-            return { ...base, textValue: checkboxValue };
-          case 'SINGLE_LINE_TEXT':
-          case 'MULTI_LINE_TEXT':
-          case 'SINGLE_CHOICE':
-            return { ...base, textValue: answer?.value?.toString() || '' };
+          case QuestionType.INTEGER:
+            return {
+              ...baseAnswer,
+              integerValue: Number(answer.value) || 0
+            };
+            
+          case QuestionType.CHECKBOX:
+            const checkboxValues = Array.isArray(answer.value) 
+              ? answer.value 
+              : [answer.value].filter(Boolean);
+            return {
+              ...baseAnswer,
+              textValue: checkboxValues.join(', ')
+            };
+            
+          case QuestionType.SINGLE_LINE_TEXT:
+          case QuestionType.MULTI_LINE_TEXT:
+          case QuestionType.SINGLE_CHOICE:
+            return {
+              ...baseAnswer,
+              textValue: String(answer.value || '')
+            };
+            
           default:
-            return { ...base, textValue: answer?.value?.toString() || '' };
+            return baseAnswer;
         }
       });
-  
+
       const formData = {
         templateId: template.id,
-        answers: formAnswers,
+        answers: answers,
         sendEmailCopy: data.emailCopy,
       };
-  
+
       const createdForm = await submitForm(formData);
       navigate(`/forms/${createdForm.id}/success`);
     } catch (err) {
@@ -136,10 +163,10 @@ const FormPreview: React.FC = () => {
       <Card>
         <Card.Header className="bg-light">
           <h2>{template.title}</h2>
-          {template.image && (
+          {template.imageUrl && (
             <div className="text-center my-3">
               <img
-                src={template.image}
+                src={template.imageUrl}
                 alt="Form header"
                 style={{ maxHeight: '200px', maxWidth: '100%' }}
                 className="img-fluid"
@@ -169,7 +196,7 @@ const FormPreview: React.FC = () => {
                   </Form.Text>
                 )}
 
-                {question.type === 'SINGLE_LINE_TEXT' && (
+                {question.type === QuestionType.SINGLE_LINE_TEXT && (
                   <Form.Control
                     type="text"
                     placeholder="Your answer"
@@ -180,7 +207,7 @@ const FormPreview: React.FC = () => {
                   />
                 )}
 
-                {question.type === 'MULTI_LINE_TEXT' && (
+                {question.type === QuestionType.MULTI_LINE_TEXT && (
                   <Form.Control
                     as="textarea"
                     rows={3}
@@ -192,7 +219,7 @@ const FormPreview: React.FC = () => {
                   />
                 )}
 
-                {question.type === 'INTEGER' && (
+                {question.type === QuestionType.INTEGER && (
                   <Form.Control
                     type="number"
                     min="0"
@@ -206,7 +233,7 @@ const FormPreview: React.FC = () => {
                   />
                 )}
 
-                {question.type === 'CHECKBOX' && question.options && (
+                {question.type === QuestionType.CHECKBOX && question.options && (
                   <div>
                     {question.options.map((option, optIndex) => (
                       <Form.Check
@@ -222,7 +249,7 @@ const FormPreview: React.FC = () => {
                   </div>
                 )}
 
-                {question.type === 'SINGLE_CHOICE' && question.options && (
+                {question.type === QuestionType.SINGLE_CHOICE && question.options && (
                   <div>
                     {question.options.map((option, optIndex) => (
                       <Form.Check

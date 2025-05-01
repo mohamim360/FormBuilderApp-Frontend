@@ -20,7 +20,7 @@ const TagCloud = () => {
     const fetchTags = async () => {
       try {
         setLoading(true);
-        // In a real app, you would call an API endpoint to get tags with counts
+       
         const response = await TemplateService.getPopularTags();
         setTags(response);
       } catch (err) {
