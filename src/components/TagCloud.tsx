@@ -1,9 +1,8 @@
-// src/components/TagCloud.tsx
 import { useEffect, useState } from "react";
-import { Badge, Spinner } from "react-bootstrap";
+import { Spinner, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { TemplateService } from "../services/templateService";
-
+import "./TagCloud.css";
 
 interface Tag {
   id: string;
@@ -20,63 +19,86 @@ const TagCloud = () => {
     const fetchTags = async () => {
       try {
         setLoading(true);
-       
         const response = await TemplateService.getPopularTags();
         setTags(response);
       } catch (err) {
-        setError("Failed to load tags");
+        setError("Failed to load tags. Please try again later.");
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchTags();
   }, []);
 
   if (loading) {
-    return <Spinner animation="border" size="sm" />;
+    return (
+      <div className="text-center py-4">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading tags...</span>
+        </Spinner>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-danger">{error}</div>;
+    return (
+      <Alert variant="warning" className="text-center">
+        {error}
+        <button 
+          className="btn btn-sm btn-outline-primary ms-2"
+          onClick={() => window.location.reload()}
+        >
+          Retry
+        </button>
+      </Alert>
+    );
   }
 
   if (tags.length === 0) {
-    return <div>No tags available yet.</div>;
+    return (
+      <Alert variant="info" className="text-center">
+        No tags available yet. Create templates to generate tags.
+      </Alert>
+    );
   }
 
-  // Calculate size based on count (simple logarithmic scaling)
-  const maxCount = Math.max(...tags.map((tag) => tag.count));
-  const minCount = Math.min(...tags.map((tag) => tag.count));
+  // Calculate visual properties based on popularity
+  const maxCount = Math.max(...tags.map(tag => tag.count));
+  const minCount = Math.min(...tags.map(tag => tag.count));
 
   return (
-    <div className="d-flex flex-wrap gap-2">
-      {tags.map((tag) => {
-        // Calculate size between 0.8 and 1.5 based on count
-        const size = 0.8 + (0.7 * (tag.count - minCount)) / (maxCount - minCount || 1);
-        return (
-          <Link
-            key={tag.id}
-            to={`/search?q=${encodeURIComponent(tag.name)}`}
-            style={{ textDecoration: "none" }}
-          >
-            <Badge
-              pill
-              bg="light"
-              text="dark"
+    <div className="tag-cloud-container">
+      <h5 className="tag-cloud-title">Browse Popular Tags</h5>
+      <div className="tag-cloud-grid">
+        {tags.map(tag => {
+          const popularity = (tag.count - minCount) / (maxCount - minCount || 1);
+          const size = 0.9 + popularity * 0.6; // 0.9rem to 1.5rem
+          const hue = 210 - popularity * 40; // Blue to purple gradient
+          const saturation = 85;
+          const lightness = 50 + popularity * 10;
+          
+          return (
+            <Link
+              key={tag.id}
+              to={`/templates/search?q=${encodeURIComponent(tag.name)}`}
+              className="tag-item"
               style={{
-                fontSize: `${size}rem`,
-                padding: "0.5em 0.75em",
-                transition: "all 0.2s ease",
-              }}
-              className="hover-shadow"
+                '--tag-size': `${size}rem`,
+                '--tag-color': `hsl(${hue}, ${saturation}%, ${lightness}%)`,
+                '--tag-shadow': `0 2px 4px hsla(${hue}, ${saturation}%, ${lightness - 20}%, 0.3)`,
+                '--tag-count': `" (${tag.count})"`,
+              } as React.CSSProperties}
+              aria-label={`Browse ${tag.name} templates (${tag.count} available)`}
             >
-              {tag.name} <small>({tag.count})</small>
-            </Badge>
-          </Link>
-        );
-      })}
+              {tag.name}
+            </Link>
+          );
+        })}
+      </div>
+      <div className="tag-cloud-footer">
+        <small>Click any tag to explore related templates</small>
+      </div>
     </div>
   );
 };
