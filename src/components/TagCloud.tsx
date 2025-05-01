@@ -67,34 +67,41 @@ const TagCloud = () => {
   const maxCount = Math.max(...tags.map(tag => tag.count));
   const minCount = Math.min(...tags.map(tag => tag.count));
 
+  // Find the longest tag name to determine max width
+  const maxTagLength = Math.max(...tags.map(tag => tag.name.length));
+
   return (
     <div className="tag-cloud-container">
       <h5 className="tag-cloud-title">Browse Popular Tags</h5>
-      <div className="tag-cloud-grid">
-        {tags.map(tag => {
-          const popularity = (tag.count - minCount) / (maxCount - minCount || 1);
-          const size = 0.9 + popularity * 0.6; // 0.9rem to 1.5rem
-          const hue = 210 - popularity * 40; // Blue to purple gradient
-          const saturation = 85;
-          const lightness = 50 + popularity * 10;
-          
-          return (
-            <Link
-              key={tag.id}
-              to={`/templates/search?q=${encodeURIComponent(tag.name)}`}
-              className="tag-item"
-              style={{
-                '--tag-size': `${size}rem`,
-                '--tag-color': `hsl(${hue}, ${saturation}%, ${lightness}%)`,
-                '--tag-shadow': `0 2px 4px hsla(${hue}, ${saturation}%, ${lightness - 20}%, 0.3)`,
-                '--tag-count': `" (${tag.count})"`,
-              } as React.CSSProperties}
-              aria-label={`Browse ${tag.name} templates (${tag.count} available)`}
-            >
-              {tag.name}
-            </Link>
-          );
-        })}
+      <div className="tag-cloud-content">
+        <div className="tag-cloud-inner">
+          {tags.map(tag => {
+            const popularity = (tag.count - minCount) / (maxCount - minCount || 1);
+            const size = 0.9 + popularity * 0.6; // 0.9rem to 1.5rem
+            const hue = 210 - popularity * 40; // Blue to purple gradient
+            const saturation = 85;
+            const lightness = 50 + popularity * 10;
+            
+            return (
+              <Link
+                key={tag.id}
+                to={`/templates/search?q=${encodeURIComponent(tag.name)}`}
+                className="tag-item"
+                style={{
+                  fontSize: `${size}rem`,
+                  color: 'white',
+                  backgroundColor: `hsl(${hue}, ${saturation}%, ${lightness}%)`,
+                  boxShadow: `0 2px 4px hsla(${hue}, ${saturation}%, ${lightness - 20}%, 0.3)`,
+                  width: `${maxTagLength * 0.6}em`, // Adjust multiplier as needed
+                }}
+                aria-label={`Browse ${tag.name} templates (${tag.count} available)`}
+              >
+                {tag.name}
+                <span className="tag-count"> ({tag.count})</span>
+              </Link>
+            );
+          })}
+        </div>
       </div>
       <div className="tag-cloud-footer">
         <small>Click any tag to explore related templates</small>

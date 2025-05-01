@@ -1,5 +1,5 @@
-       
-       
+
+
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
@@ -27,31 +27,36 @@ function App() {
           <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/templates/search" element={<SearchResultsPage />} />
-            <Route path="/public/:templateId" element={<PublicTemplateView />} />
+            <Route path="/:templateId" element={<PublicTemplateView />} />
           </Route>
 
           <Route element={<AuthLayout />}>
 
             <Route path="/login" element={<LoginForm />} />
+
             <Route path="/register" element={<RegisterForm />} />
+
             <Route path="/templates/:templateId" element={
-            <PrivateRoute>
-              <FormPreview />
-            </PrivateRoute>
-          } />
+              <PrivateRoute>
+                <FormPreview />
+              </PrivateRoute>
+            } />
 
-          <Route path="/forms" element={
-            <PrivateRoute>
-              <FormList />
-            </PrivateRoute>
-          } />
+            <Route path="/forms" element={
+              <PrivateRoute>
+                <FormList />
+              </PrivateRoute>
+            } />
 
-          <Route path="/forms/:id/success" element={
-            <PrivateRoute>
-              <FormSuccess />
-            </PrivateRoute>
-          } />
-          <Route path="/template" element={<PrivateRoute><TemplateEditor /></PrivateRoute>} />
+            <Route path="/forms/:id/success" element={
+              <PrivateRoute>
+                <FormSuccess />
+              </PrivateRoute>
+            } />
+
+            <Route path="/template" element={<PrivateRoute>
+              <TemplateEditor />
+              </PrivateRoute>} />
           </Route>
 
         </Routes>

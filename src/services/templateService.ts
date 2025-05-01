@@ -1,4 +1,3 @@
-// src/services/template.service.ts
 import axios from 'axios';
 import { Template } from '../types';
 
@@ -103,4 +102,65 @@ async getPopularTags(limit: number = 50): Promise<{ id: string; name: string; co
     throw error;
   }
 },
+// Add these to your existing TemplateService in src/services/template.service.ts
+
+async getComments(templateId: string, page: number = 1, limit: number = 10) {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/${templateId}/comments`, {
+      params: { page, limit }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    throw error;
+  }
+},
+
+async addComment(templateId: string, userId: string, content: string) {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/${templateId}/comments`, 
+      { content }, // Make sure this matches what the server expects
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error adding comment:', error);
+    throw error;
+  }
+},
+
+async likeTemplate(templateId: string) {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/${templateId}/like`);
+    return response.data;
+  } catch (error) {
+    console.error('Error liking template:', error);
+    throw error;
+  }
+},
+
+async unlikeTemplate(templateId: string) {
+  try {
+    const response = await axios.delete(`${API_BASE_URL}/${templateId}/like`);
+    return response.data;
+  } catch (error) {
+    console.error('Error unliking template:', error);
+    throw error;
+  }
+},
+
+async checkUserLike(templateId: string) {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/${templateId}/like`);
+    return response.data;
+  } catch (error) {
+    console.error('Error checking user like:', error);
+    throw error;
+  }
+}
 };

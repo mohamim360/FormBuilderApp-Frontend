@@ -1,21 +1,42 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { Template } from '../types/types'
 import { TemplateService } from '../services/templateService'
 import { useAuth } from '../context/AuthContext'
+import { Button, Container, Row, Col, Card, Badge, Form, ListGroup, Spinner, Alert } from 'react-bootstrap'
+import { FaHeart, FaRegHeart, FaComment, FaUser, FaStar, FaShare } from 'react-icons/fa'
+import moment from 'moment'
 
 export default function PublicTemplateView() {
   const { templateId } = useParams()
   const [template, setTemplate] = useState<Template | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [comment, setComment] = useState('')
+  const [comments, setComments] = useState<any[]>([])
+  const [isLiked, setIsLiked] = useState(false)
+  const [likeCount, setLikeCount] = useState(0)
+  const [commentLoading, setCommentLoading] = useState(false)
+  const [likeLoading, setLikeLoading] = useState(false)
   const { user } = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchTemplate = async () => {
       try {
         const data = await TemplateService.getTemplate(templateId!)
         setTemplate(data)
+        setLikeCount(data._count?.likes || 0)
+
+        // Fetch comments
+        const commentsData = await TemplateService.getComments(templateId!)
+        setComments(commentsData.comments)
+
+        // Check if user liked the template
+        if (user) {
+          const liked = await TemplateService.checkUserLike(templateId!, user.userId)
+          setIsLiked(!!liked)
+        }
       } catch (err) {
         setError('Template not found or you don\'t have access')
         console.error('Error fetching template:', err)
@@ -25,95 +46,264 @@ export default function PublicTemplateView() {
     }
 
     fetchTemplate()
-  }, [templateId])
+  }, [templateId, user])
 
-  if (loading) return <div>Loading...</div>
-  if (error) return <div className="text-red-500">{error}</div>
-  if (!template) return <div>Template not found</div>
+  const handleLike = async () => {
+    if (!user) {
+      navigate('/login')
+      return
+    }
+  
+    try {
+      setLikeLoading(true)
+      if (isLiked) {
+        await TemplateService.unlikeTemplate(templateId!, user.userId)
+        setLikeCount(prev => prev - 1)  // Decrement when unliking
+      } else {
+        await TemplateService.likeTemplate(templateId!, user.userId)
+        setLikeCount(prev => prev + 1)  // Increment when liking
+      }
+      setIsLiked(!isLiked)
+    } catch (error) {
+      console.error('Error toggling like:', error)
+      setError('Failed to update like status')
+    } finally {
+      setLikeLoading(false)
+    }
+  }
+  const handleCommentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!user || !comment.trim()) return
+
+    try {
+      setCommentLoading(true)
+      const newComment = await TemplateService.addComment(templateId!, user.userId, comment)
+      setComments(prev => [newComment, ...prev])
+      setComment('')
+    } catch (error) {
+      console.error('Error submitting comment:', error)
+      setError('Failed to submit comment')
+    } finally {
+      setCommentLoading(false)
+    }
+  }
+
+  if (loading) return (
+    <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
+      <Spinner animation="border" variant="primary" />
+    </Container>
+  )
+
+  if (error) return (
+    <Container className="mt-5">
+      <Alert variant="danger">{error}</Alert>
+    </Container>
+  )
+
+  if (!template) return (
+    <Container className="mt-5">
+      <Alert variant="warning">Template not found</Alert>
+    </Container>
+  )
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        {template.imageUrl && (
-          <img 
-            src={template.imageUrl} 
-            alt={template.title} 
-            className="w-full h-64 object-cover rounded-lg mb-6"
-          />
-        )}
-        
-        <h1 className="text-3xl font-bold mb-2">{template.title}</h1>
-        <p className="text-gray-600 mb-4">By {template.author?.name || 'Anonymous'}</p>
-        
-        <div className="flex gap-4 mb-6">
-          <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
-            {template.topic}
-          </span>
-          <span className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full">
-            {template._count?.forms || 0} uses
-          </span>
-          <span className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full">
-            {template._count?.likes || 0} likes
-          </span>
-        </div>
-        
-        <div className="prose max-w-none mb-8">
-          <p>{template.description}</p>
-        </div>
-        
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Questions</h2>
-          <div className="space-y-4">
-            {template.questions?.map((question, index) => (
-              <div key={question.id} className="border rounded-lg p-4">
-                <div className="flex justify-between mb-2">
-                  <h3 className="font-medium">
-                    {index + 1}. {question.title}
-                    {question.isRequired && <span className="text-red-500 ml-1">*</span>}
-                  </h3>
-                  <span className="text-sm text-gray-500">{question.type}</span>
-                </div>
-                {question.description && (
-                  <p className="text-gray-600 text-sm mb-3">{question.description}</p>
-                )}
-                {question.options && question.options.length > 0 && (
-                  <div className="space-y-2">
-                    {question.options.map((option, i) => (
-                      <div key={i} className="flex items-center">
-                        <input 
-                          type={question.type === 'SINGLE_CHOICE' ? 'radio' : 'checkbox'} 
-                          className="mr-2"
-                          disabled
-                        />
-                        <span>{option}</span>
-                      </div>
-                    ))}
+    <Container className="py-5">
+      <Row className="justify-content-center">
+        <Col lg={8}>
+          {/* Template Header */}
+          <Card className="mb-4 border-0 shadow-sm">
+            {template.imageUrl && (
+              <Card.Img
+                variant="top"
+                src={template.imageUrl}
+                alt={template.title}
+                style={{ height: '300px', objectFit: 'cover' }}
+              />
+            )}
+            <Card.Body>
+              <div className="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <h1 className="h2 mb-2">{template.title}</h1>
+                  <div className="d-flex align-items-center mb-3">
+                    <FaUser className="me-2 text-muted" />
+                    <span className="text-muted me-3">By {template.author?.name || 'Anonymous'}</span>
+                    <span className="text-muted">
+                      Created {moment(template.createdAt).fromNow()}
+                    </span>
                   </div>
+                </div>
+                <Button
+                  variant={isLiked ? 'danger' : 'outline-danger'}
+                  onClick={handleLike}
+                  disabled={likeLoading}
+                >
+                  {likeLoading ? (
+                    <Spinner as="span" animation="border" size="sm" />
+                  ) : (
+                    <>
+                      {isLiked ? <FaHeart /> : <FaRegHeart />} 
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              <div className="mb-4">
+                <Badge bg="primary" className="me-2">{template.topic}</Badge>
+                <Badge bg="light" text="dark" className="me-2">
+                  <FaStar className="text-warning me-1" />
+                  {template._count?.forms || 0} uses
+                </Badge>
+                <Badge bg="light" text="dark">
+                  <FaHeart className="text-danger me-1" />
+                  {likeCount} likes
+                </Badge>
+              </div>
+
+              <Card.Text className="lead mb-4">{template.description}</Card.Text>
+
+              <div className="d-flex gap-2">
+                {user ? (
+                  <Button
+                    as={Link}
+                    to={`/templates/${templateId}`}
+                    variant="primary"
+                    size="lg"
+                  >
+                    Use this template
+                  </Button>
+                ) : (
+                  <Button
+                    as={Link}
+                    to="/login"
+                    variant="primary"
+                    size="lg"
+                  >
+                    Login to use template
+                  </Button>
+                )}
+                <Button variant="outline-secondary" size="lg">
+                  <FaShare className="me-2" />
+                  Share
+                </Button>
+              </div>
+            </Card.Body>
+          </Card>
+
+          {/* Questions Section */}
+          <Card className="mb-4 border-0 shadow-sm">
+            <Card.Body>
+              <h2 className="h4 mb-4">Questions</h2>
+              <div className="gap-3">
+                {template.questions?.map((question, index) => (
+                  <Card key={question.id} className="mb-3">
+                    <Card.Body>
+                      <div className="d-flex justify-content-between mb-2">
+                        <Card.Title className="h6 mb-0">
+                          {index + 1}. {question.title}
+                          {question.isRequired && <span className="text-danger ms-1">*</span>}
+                        </Card.Title>
+                        <Badge bg="light" text="dark" className="text-uppercase">
+                          {question.type.replace('_', ' ').toLowerCase()}
+                        </Badge>
+                      </div>
+                      {question.description && (
+                        <Card.Text className="text-muted small mb-3">
+                          {question.description}
+                        </Card.Text>
+                      )}
+                      {question.options && question.options.length > 0 && (
+                        <ListGroup variant="flush">
+                          {question.options.map((option, i) => (
+                            <ListGroup.Item key={i} className="d-flex align-items-center py-2">
+                              <Form.Check
+                                type={question.type === 'SINGLE_CHOICE' ? 'radio' : 'checkbox'}
+                                className="me-2"
+                                disabled
+                              />
+                              <span>{option}</span>
+                            </ListGroup.Item>
+                          ))}
+                        </ListGroup>
+                      )}
+                    </Card.Body>
+                  </Card>
+                ))}
+              </div>
+            </Card.Body>
+          </Card>
+
+          {/* Comments Section */}
+          <Card className="border-0 shadow-sm">
+            <Card.Body>
+              <h2 className="h4 mb-4">
+                <FaComment className="me-2" />
+                Comments ({comments.length})
+              </h2>
+
+              {user ? (
+                <Form onSubmit={handleCommentSubmit} className="mb-4">
+                  <Form.Group controlId="commentText">
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      placeholder="Add a comment..."
+                      className="mb-2"
+                    />
+                    <Button
+                      variant="primary"
+                      type="submit"
+                      disabled={commentLoading || !comment.trim()}
+                    >
+                      {commentLoading ? (
+                        <Spinner as="span" animation="border" size="sm" />
+                      ) : (
+                        'Post Comment'
+                      )}
+                    </Button>
+                  </Form.Group>
+                </Form>
+              ) : (
+                <Alert variant="info" className="mb-4">
+                  Please <Link to="/login">login</Link> to leave a comment.
+                </Alert>
+              )}
+
+              <div className="comments-list">
+                {comments.length === 0 ? (
+                  <Alert variant="light" className="text-center">
+                    No comments yet. Be the first to comment!
+                  </Alert>
+                ) : (
+                  comments.map((comment) => (
+                    <Card key={comment.id} className="mb-3">
+                      <Card.Body>
+                        <div className="d-flex">
+                          <div className="flex-shrink-0 me-3">
+                            <div className="bg-light rounded-circle d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px' }}>
+                              <FaUser />
+                            </div>
+                          </div>
+                          <div className="flex-grow-1">
+                            <div className="d-flex justify-content-between">
+                              <h6 className="mb-1">{comment.user.name}</h6>
+                              <small className="text-muted">
+                                {moment(comment.createdAt).fromNow()}
+                              </small>
+                            </div>
+                            <p className="mb-0">{comment.content}</p>
+                          </div>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  ))
                 )}
               </div>
-            ))}
-          </div>
-        </div>
-        
-        {user ? (
-          <Link 
-            to={`/templates/${templateId}`} 
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Use this template
-          </Link>
-        ) : (
-          <div className="space-y-4">
-            <p className="text-gray-600">Sign in to use this template</p>
-            <Link 
-              to="/login" 
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Login
-            </Link>
-          </div>
-        )}
-      </div>
-    </div>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   )
 }

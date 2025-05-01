@@ -1,9 +1,11 @@
 // src/pages/Home.tsx
 import { useEffect, useState } from "react";
-import { Card, Container, Row, Col, Badge, Spinner, Button } from "react-bootstrap";
+import { Card, Container, Row, Col, Badge, Spinner, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
+import { FaHeart, FaRegHeart, FaUser, FaStar, FaEye } from "react-icons/fa";
+import moment from "moment";
+import './TagCloud.css'
 import { Template } from "../types/types";
 import TagCloud from "../components/TagCloud";
 import { TemplateService } from "../services/templateService";
@@ -38,24 +40,22 @@ const Home = () => {
 
   if (loading) {
     return (
-      <Container className="text-center my-5">
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
+      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
+        <Spinner animation="border" variant="primary" />
       </Container>
     );
   }
 
   if (error) {
     return (
-      <Container className="my-5">
-        <div className="alert alert-danger">{error}</div>
+      <Container className="mt-5">
+        <Alert variant="danger">{error}</Alert>
       </Container>
     );
   }
 
   return (
-    <Container className="my-5">
+    <Container className="py-5">
       {/* Hero Section */}
       <Row className="mb-5 text-center">
         <Col>
@@ -84,20 +84,15 @@ const Home = () => {
       <Row className="mb-5">
         <Col>
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2>Latest Templates</h2>
+            <h2 className="h4">Latest Templates</h2>
             <Link to="/templates/search" className="btn btn-outline-primary">
               View All
             </Link>
           </div>
           {latestTemplates.length === 0 ? (
-            <div className="text-center py-5 bg-light rounded">
-              <p className="text-muted">No templates available yet.</p>
-              {user && (
-                <Link to="/template" className="btn btn-primary">
-                  Create Your First Template
-                </Link>
-              )}
-            </div>
+            <Alert variant="light" className="text-center py-4">
+              No templates available yet. {user && <Link to="/template">Create Your First Template</Link>}
+            </Alert>
           ) : (
             <Row xs={1} md={2} lg={3} className="g-4">
               {latestTemplates.map((template) => (
@@ -114,15 +109,15 @@ const Home = () => {
       <Row className="mb-5">
         <Col>
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2>Most Popular Templates</h2>
+            <h2 className="h4">Most Popular Templates</h2>
             <Link to="/templates/search" className="btn btn-outline-primary">
               View All
             </Link>
           </div>
           {popularTemplates.length === 0 ? (
-            <div className="text-center py-5 bg-light rounded">
-              <p className="text-muted">No popular templates yet.</p>
-            </div>
+            <Alert variant="light" className="text-center py-4">
+              No popular templates yet.
+            </Alert>
           ) : (
             <Row xs={1} md={2} lg={3} className="g-4">
               {popularTemplates.map((template) => (
@@ -155,85 +150,86 @@ interface TemplateCardProps {
 
 const TemplateCard = ({ template, showPopularity = false }: TemplateCardProps) => {
   return (
-    <Card className="h-100 shadow-sm border-0 overflow-hidden hover-shadow">
+    <Card className="h-100 border-0 shadow-sm">
       {template.imageUrl ? (
-        <div className="position-relative" style={{ height: "180px", overflow: "hidden" }}>
+        <div className="position-relative" style={{ height: "200px", overflow: "hidden" }}>
           <Card.Img
             variant="top"
             src={template.imageUrl}
             alt={template.title}
-            style={{ 
-              height: "100%", 
-              width: "100%", 
+            style={{
+              height: "100%",
+              width: "100%",
               objectFit: "cover",
-              transition: "transform 0.3s ease"
             }}
-            className="hover-zoom"
           />
-          <div className="position-absolute top-0 end-0 m-2">
-            <Badge bg="success" pill>
-              {template._count.forms} responses
-            </Badge>
-          </div>
-          {showPopularity && (
-            <div className="position-absolute top-0 start-0 m-2">
-              <Badge bg="danger" pill>
-                <i className="bi bi-fire me-1"></i> Popular
-              </Badge>
-            </div>
-          )}
         </div>
       ) : (
-        <div 
-          className="bg-secondary" 
-          style={{ height: "180px", display: "flex", alignItems: "center", justifyContent: "center" }}
+        <div
+          className="bg-light d-flex align-items-center justify-content-center"
+          style={{ height: "200px" }}
         >
-          <span className="text-white">No preview image</span>
+          <span className="text-muted">No preview image</span>
         </div>
       )}
+
       <Card.Body className="d-flex flex-column">
-        <Card.Title className="fs-5 fw-bold">{template.title}</Card.Title>
-        <Card.Subtitle className="mb-2 text-muted small">
-          by {template.author.name}
-        </Card.Subtitle>
-        <Card.Text className="flex-grow-1 small text-muted">
+        <Card.Title className="h5 mb-2">{template.title}</Card.Title>
+
+        <div className="d-flex align-items-center mb-2 small text-muted">
+          <FaUser className="me-2" />
+          <span>By {template.author?.name || 'Anonymous'}</span>
+        </div>
+
+        <Card.Text className="flex-grow-1 mb-3">
           {template.description.length > 100
             ? `${template.description.substring(0, 100)}...`
             : template.description}
         </Card.Text>
-        <div className="mt-auto">
-          <div className="mb-2">
-            {template.tags?.slice(0, 3).map((tag) => (
-              <Badge key={tag.id} bg="light" text="dark" className="me-1">
-                {tag.name}
-              </Badge>
-            ))}
+
+        <div className="mb-3">
+          <Badge bg="primary" className="me-2">{template.topic || 'General'}</Badge>
+          {template.tags?.slice(0, 2).map((tag) => (
+            <Badge key={tag.id} bg="light" text="dark" className="me-2">
+              {tag.name}
+            </Badge>
+          ))}
+        </div>
+
+        <div className="d-flex justify-content-between align-items-center">
+          <div>
+            <Badge bg="light" text="dark" className="me-2">
+              <FaStar className="text-warning me-1" />
+              {template._count?.forms || 0} uses
+            </Badge>
+            <Badge bg="light" text="dark">
+              <FaHeart className="text-danger me-1" />
+              {template._count?.likes || 0} likes
+            </Badge>
           </div>
-          <div className="d-flex justify-content-between align-items-center">
-            <div>
-              <Badge bg="primary" className="me-1">
-                {template.category || "General"}
-              </Badge>
-              {showPopularity && (
-                <Badge bg="warning" text="dark">
-                  <i className="bi bi-heart-fill me-1"></i>
-                  {template._count.likes}
-                </Badge>
-              )}
-            </div>
-            <Link 
-              to={`/templates/${template.id}`} 
-              className="btn btn-sm btn-primary"
+          <div className="d-flex gap-2">
+            <Button
+              variant="outline-primary"
+              size="sm"
+              as={Link}
+              to={`/${template.id}`}
+            >
+              <FaEye className="me-1" />
+              View
+            </Button>
+            <Link
+              to={`/templates/${template.id}`}
+              className="btn btn-primary btn-sm "
             >
               Use Template
             </Link>
           </div>
+
         </div>
       </Card.Body>
-      <Card.Footer className="bg-white border-0">
-        <small className="text-muted">
-          Last updated {new Date(template.updatedAt).toLocaleDateString()}
-        </small>
+
+      <Card.Footer className="bg-white border-0 small text-muted">
+        Created {moment(template.createdAt).fromNow()}
       </Card.Footer>
     </Card>
   );
