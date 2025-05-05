@@ -188,9 +188,18 @@ export default function PublicTemplateView() {
                     to={`/templates/${templateId}/responses`}
                     variant="outline-primary"
                     size="lg"
-                    className={location.pathname.includes('responses') ? 'active' : ''}
                   >
                     View Responses
+                  </Button>
+                )}
+                {user && (template.author?.id === user.id || user.role === 'ADMIN') && (
+                  <Button
+                    as={Link}
+                    to={`/templates/${templateId}/edit`}
+                    variant="outline-secondary"
+                    size="lg"
+                  >
+                    Edit Template
                   </Button>
                 )}
               </div>

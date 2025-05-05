@@ -73,9 +73,7 @@ const Home = () => {
                 Create New Template
               </Link>
             )}
-            <Link to="/templates/search" className="btn btn-outline-secondary btn-lg px-4">
-              Browse Templates
-            </Link>
+         
           </div>
         </Col>
       </Row>
@@ -85,9 +83,7 @@ const Home = () => {
         <Col>
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h2 className="h4">Latest Templates</h2>
-            <Link to="/templates/search" className="btn btn-outline-primary">
-              View All
-            </Link>
+          
           </div>
           {latestTemplates.length === 0 ? (
             <Alert variant="light" className="text-center py-4">
@@ -110,9 +106,7 @@ const Home = () => {
         <Col>
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h2 className="h4">Most Popular Templates</h2>
-            <Link to="/templates/search" className="btn btn-outline-primary">
-              View All
-            </Link>
+          
           </div>
           {popularTemplates.length === 0 ? (
             <Alert variant="light" className="text-center py-4">

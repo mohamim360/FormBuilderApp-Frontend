@@ -1,9 +1,10 @@
 // src/components/Header.tsx
 import { useState } from "react";
-import { Button, Modal, Spinner } from "react-bootstrap";
+import { Button, Form, Modal, Nav, Spinner } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { AuthService } from "../services/authService";
+import { FaHome } from "react-icons/fa";
 
 
 
@@ -11,14 +12,20 @@ export const Header = () => {
   const { user, loading, logout } = useAuth();
   const [showProfileModal, setShowProfileModal] = useState(false);
   const navigate = useNavigate();
-
+  const [searchQuery, setSearchQuery] = useState("");
+ 
   const handleSignOut = () => {
     AuthService.logout();
     logout();
     setShowProfileModal(false);
     navigate('/login');
   };
-
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
   // Generate initials-based avatar if no image URL provided
   const getAvatar = () => {
     if (!user) return '';
@@ -49,57 +56,61 @@ export const Header = () => {
         <div className="container-fluid">
           {/* Logo */}
           <Link className="navbar-brand" to="/">
-            <img
-              src="/docs/5.3/assets/brand/bootstrap-logo.svg"
-              alt="Logo"
-              width="30"
-              height="24"
-              className="d-inline-block align-text-top me-2"
-            />
-            <span className="">Form</span>
+        
+            <span className="">FormBuilder</span>
           </Link>
 
           {/* Search bar */}
           <div className="d-flex flex-grow-1 mx-4" style={{ maxWidth: '600px' }}>
-            <form className="d-flex w-100" role="search">
-              <input
-                className="form-control me-2"
-                type="search"
-                placeholder="Search templates..."
-                aria-label="Search"
-              />
-              <button className="btn btn-outline-primary" type="submit">
-                Search
-              </button>
-            </form>
+          <Form className="d-flex w-100" onSubmit={handleSearchSubmit}>
+      <Form.Control
+        type="search"
+        placeholder="Search templates..."
+        aria-label="Search"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+      <Button variant="outline-primary" type="submit">
+        Search
+      </Button>
+    </Form>
           </div>
 
           {/* Navigation items */}
-          <ul className="navbar-nav">
+          <Nav className="align-items-center">
             {user ? (
-              <li className="nav-item">
-                <button
-                  className="nav-link d-flex align-items-center bg-transparent border-0"
-                  onClick={() => setShowProfileModal(true)}
-                >
-                  <img
-                    src={getAvatar()}
-                    alt="avatar"
-                    className="rounded-circle me-2"
-                    width="32"
-                    height="32"
-                  />
-                  <span className="d-none d-lg-inline">{user.name}</span>
-                </button>
-              </li>
+              <>
+                <Nav.Item className="me-3 ">
+                  <Link to="/dashboard" className="nav-link">
+                    <FaHome className="me-1" />
+                    Dashboard
+                  </Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <button
+                    className="nav-link d-flex align-items-center bg-transparent border-0"
+                    onClick={() => setShowProfileModal(true)}
+                  >
+                    <img
+                      src={getAvatar()}
+                      alt="avatar"
+                      className="rounded-circle me-2"
+                      width="32"
+                      height="32"
+                    />
+                    <span className="d-none d-lg-inline">{user.name}</span>
+                  </button>
+                </Nav.Item>
+              </>
             ) : (
-              <li className="nav-item">
+              <Nav.Item>
                 <Link to="/login" className="btn btn-primary ms-2">
                   Log In
                 </Link>
-              </li>
+              </Nav.Item>
             )}
-          </ul>
+          </Nav>
+       
         </div>
       </nav>
 

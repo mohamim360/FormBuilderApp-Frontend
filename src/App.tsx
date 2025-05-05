@@ -1,6 +1,4 @@
 
-
-
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
 import LoginForm from './pages/LoginForm'
@@ -17,6 +15,7 @@ import HomePage from './components/HomePage'
 import SearchResultsPage from './components/SearchResultsPage'
 import PublicTemplateView from './components/PublicTemplateView'
 import TemplateResponses from './components/TemplateResponses'
+import Dashboard from './components/Dashboard'
 
 function App() {
 
@@ -27,11 +26,16 @@ function App() {
 
           <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
-            <Route path="/templates/search" element={<SearchResultsPage />} />
+            <Route path="/search" element={<SearchResultsPage />} />
             <Route path="/:templateId" element={<PublicTemplateView />} />
             <Route path="/templates/:templateId" element={
               <PrivateRoute>
                 <FormPreview />
+              </PrivateRoute>
+            } />
+            <Route path="/dashboard" element={
+              <PrivateRoute>
+                <Dashboard />
               </PrivateRoute>
             } />
             <Route path="/forms" element={
@@ -49,6 +53,7 @@ function App() {
             <Route path="/template" element={<PrivateRoute>
               <TemplateEditor />
             </PrivateRoute>} />
+            <Route path="/templates/:id/edit" element={<PrivateRoute><TemplateEditor /></PrivateRoute>} />
             <Route path="/templates/:templateId/responses" element={<PrivateRoute><TemplateResponses /></PrivateRoute>} />
           </Route>
 

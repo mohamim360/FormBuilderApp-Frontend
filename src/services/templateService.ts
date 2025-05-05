@@ -52,13 +52,20 @@ export const TemplateService = {
       throw error;
     }
   },
-	async searchTemplates(query: string, page: number = 1, limit: number = 8): Promise<{ 
+  async searchTemplates(query: string, page: number = 1, limit: number = 8): Promise<{ 
     templates: Template[], 
     total: number 
   }> {
     try {
       const response = await axios.get(`${API_BASE_URL}/search`, {
-        params: { q: query, page, limit }
+        params: { 
+          q: query, 
+          page, 
+          limit 
+        },
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
       return response.data;
     } catch (error) {
@@ -200,4 +207,5 @@ async getTemplateStats(templateId: string, userId: string) {
     throw error;
   }
 },
+
 };

@@ -282,17 +282,7 @@ const TemplateEditor = () => {
               {...register('title', { required: 'Title is required' })}
             />
             <div>
-              {isEditMode && (
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={handleDelete}
-                  className="me-2"
-                  disabled={isLoading}
-                >
-                  Delete
-                </Button>
-              )}
+          
               <Button
                 variant="primary"
                 size="sm"

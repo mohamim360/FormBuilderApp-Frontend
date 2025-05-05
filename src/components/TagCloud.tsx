@@ -85,7 +85,7 @@ const TagCloud = () => {
             return (
               <Link
                 key={tag.id}
-                to={`/templates/search?q=${encodeURIComponent(tag.name)}`}
+                to={`/search?q=${encodeURIComponent(tag.name)}`}
                 className="tag-item"
                 style={{
                   fontSize: `${size}rem`,
