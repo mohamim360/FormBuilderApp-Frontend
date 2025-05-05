@@ -16,6 +16,7 @@ import FormSuccess from './components/FormSuccess'
 import HomePage from './components/HomePage'
 import SearchResultsPage from './components/SearchResultsPage'
 import PublicTemplateView from './components/PublicTemplateView'
+import TemplateResponses from './components/TemplateResponses'
 
 function App() {
 
@@ -48,6 +49,7 @@ function App() {
             <Route path="/template" element={<PrivateRoute>
               <TemplateEditor />
             </PrivateRoute>} />
+            <Route path="/templates/:templateId/responses" element={<PrivateRoute><TemplateResponses /></PrivateRoute>} />
           </Route>
 
           <Route element={<AuthLayout />}>

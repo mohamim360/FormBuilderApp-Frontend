@@ -74,7 +74,7 @@ const TemplateEditor = () => {
   const [showAccessModal, setShowAccessModal] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-console.log(user);
+  console.log(user);
   const { control, register, handleSubmit, watch, setValue, reset } = useForm<FormData>({
     defaultValues: {
       title: '',
@@ -141,8 +141,7 @@ console.log(user);
         title: data.title,
         description: data.description,
         topic: data.topic,
-        imageUrl: data.imageUrl,
-        isPublic: data.accessType === 'PUBLIC',
+        imageUrl: watch('imageUrl'), isPublic: data.accessType === 'PUBLIC',
         accessType: data.accessType,
         questions: data.questions.map((q, index) => ({
           title: q.title,
@@ -213,20 +212,24 @@ console.log(user);
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setIsLoading(true);
     try {
-      // Create FormData for file upload
       const formData = new FormData();
       formData.append('image', file);
-      
-      // Upload to your backend
+
       const uploadResponse = await TemplateService.uploadImage(formData);
-      
-      // Save the returned image URL
+
+      // Store the URL in form data
       setValue('imageUrl', uploadResponse.url);
-    } catch {
+      toast.success('Image uploaded successfully');
+    } catch (error) {
+      console.error('Image upload failed:', error);
       toast.error('Failed to upload image');
+    } finally {
+      setIsLoading(false);
     }
   };
+
 
   const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const tags = e.target.value.split(',').map(tag => tag.trim());

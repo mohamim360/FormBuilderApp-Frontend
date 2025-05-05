@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext'
 import { Button, Container, Row, Col, Card, Badge, Form, ListGroup, Spinner, Alert } from 'react-bootstrap'
 import { FaHeart, FaRegHeart, FaComment, FaUser, FaStar, FaShare } from 'react-icons/fa'
 import moment from 'moment'
+import TemplateResponses from './TemplateResponses'
 
 export default function PublicTemplateView() {
   const { templateId } = useParams()
@@ -53,7 +54,7 @@ export default function PublicTemplateView() {
       navigate('/login')
       return
     }
-  
+
     try {
       setLikeLoading(true)
       if (isLiked) {
@@ -141,7 +142,7 @@ export default function PublicTemplateView() {
                     <Spinner as="span" animation="border" size="sm" />
                   ) : (
                     <>
-                      {isLiked ? <FaHeart /> : <FaRegHeart />} 
+                      {isLiked ? <FaHeart /> : <FaRegHeart />}
                     </>
                   )}
                 </Button>
@@ -181,10 +182,17 @@ export default function PublicTemplateView() {
                     Login to use template
                   </Button>
                 )}
-                <Button variant="outline-secondary" size="lg">
-                  <FaShare className="me-2" />
-                  Share
-                </Button>
+                {user && template.author?.id === user.id && (
+                  <Button
+                    as={Link}
+                    to={`/templates/${templateId}/responses`}
+                    variant="outline-primary"
+                    size="lg"
+                    className={location.pathname.includes('responses') ? 'active' : ''}
+                  >
+                    View Responses
+                  </Button>
+                )}
               </div>
             </Card.Body>
           </Card>

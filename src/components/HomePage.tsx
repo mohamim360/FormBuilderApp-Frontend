@@ -149,29 +149,51 @@ interface TemplateCardProps {
 }
 
 const TemplateCard = ({ template, showPopularity = false }: TemplateCardProps) => {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
   return (
     <Card className="h-100 border-0 shadow-sm">
-      {template.imageUrl ? (
-        <div className="position-relative" style={{ height: "200px", overflow: "hidden" }}>
-          <Card.Img
-            variant="top"
-            src={template.imageUrl}
-            alt={template.title}
-            style={{
-              height: "100%",
-              width: "100%",
-              objectFit: "cover",
-            }}
-          />
-        </div>
-      ) : (
-        <div
-          className="bg-light d-flex align-items-center justify-content-center"
-          style={{ height: "200px" }}
-        >
-          <span className="text-muted">No preview image</span>
-        </div>
-      )}
+      <div className="position-relative" style={{ height: "200px", overflow: "hidden" }}>
+        {template.imageUrl && !imageError ? (
+          <>
+            {imageLoading && (
+              <div className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                <Spinner animation="border" size="sm" />
+              </div>
+            )}
+            <Card.Img
+              variant="top"
+              src={template.imageUrl}
+              alt={template.title}
+              style={{
+                height: "100%",
+                width: "100%",
+                objectFit: "cover",
+                display: imageLoading ? "none" : "block"
+              }}
+              onLoad={() => setImageLoading(false)}
+              onError={() => {
+                setImageError(true);
+                setImageLoading(false);
+              }}
+            />
+          </>
+        ) : (
+          <div
+            className="bg-light d-flex align-items-center justify-content-center h-100"
+            style={{ backgroundColor: '#f8f9fa' }}
+          >
+            <div className="text-center p-3">
+              <div className="text-muted mb-2">
+                {imageError ? 'Image failed to load' : 'No preview image'}
+              </div>
+              <div className="text-primary" style={{ fontSize: '2rem' }}>
+                {template.title.charAt(0).toUpperCase()}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
 
       <Card.Body className="d-flex flex-column">
         <Card.Title className="h5 mb-2">{template.title}</Card.Title>

@@ -162,5 +162,42 @@ async checkUserLike(templateId: string) {
     console.error('Error checking user like:', error);
     throw error;
   }
-}
+},
+async getTemplateForms(templateId: string, userId: string, page: number = 1, limit: number = 10) {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/${templateId}/forms`, {
+      params: { page, limit },
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching template forms:', error);
+    throw error;
+  }
+},
+
+async getTemplateStats(templateId: string, userId: string) {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/${templateId}/stats`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching template stats:', error);
+    throw error;
+  }
+},
+  async uploadImage(formData: FormData) {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/upload-image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    throw error;
+  }
+},
 };
