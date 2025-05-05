@@ -45,8 +45,9 @@ const AdminDashboard: React.FC = () => {
 		searchTerm: '',
 	});
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [activeTab, setActiveTab] = useState<'users' | 'templates'>('users');
+	const activeTab: 'users' | 'templates' = 'users';
+
+
 
 	useEffect(() => {
 		if (user?.role !== 'ADMIN') return;

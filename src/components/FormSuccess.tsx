@@ -22,22 +22,25 @@ const FormSuccess: React.FC = () => {
           </Alert>
 
           <div className="d-flex justify-content-center gap-3">
-            <Button
-              variant="primary"
-              as={Link}
-              to="/"
-              className="d-flex align-items-center gap-2"
-            >
-              <FaHome /> Return Home
-            </Button>
-            <Button
-              variant="secondary"
-              as={Link}
-              to="/forms"
-              className="d-flex align-items-center gap-2"
-            >
-              <FaList /> View My Forms
-            </Button>
+            <Link to="/">
+              <Button
+                variant="primary"
+                className="d-flex align-items-center gap-2"
+              >
+                <FaHome /> Return Home
+              </Button>
+            </Link>
+            <Link to="/forms">
+              <Button
+                variant="secondary"
+
+
+                className="d-flex align-items-center gap-2"
+              >
+                <FaList /> View My Forms
+              </Button>
+            </Link>
+
           </div>
         </Card.Body>
         <Card.Footer className="text-muted">

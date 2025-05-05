@@ -72,7 +72,7 @@ const Home = () => {
                 Create New Template
               </Link>
             )}
-         
+
           </div>
         </Col>
       </Row>
@@ -82,7 +82,7 @@ const Home = () => {
         <Col>
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h2 className="h4">Latest Templates</h2>
-          
+
           </div>
           {latestTemplates.length === 0 ? (
             <Alert variant="light" className="text-center py-4">
@@ -105,7 +105,7 @@ const Home = () => {
         <Col>
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h2 className="h4">Most Popular Templates</h2>
-          
+
           </div>
           {popularTemplates.length === 0 ? (
             <Alert variant="light" className="text-center py-4">
@@ -141,7 +141,7 @@ interface TemplateCardProps {
   showPopularity?: boolean;
 }
 
-const TemplateCard = ({ template, showPopularity = false }: TemplateCardProps) => {
+const TemplateCard = ({ template }: TemplateCardProps) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   return (
@@ -223,15 +223,16 @@ const TemplateCard = ({ template, showPopularity = false }: TemplateCardProps) =
             </Badge>
           </div>
           <div className="d-flex gap-2">
-            <Button
-              variant="outline-primary"
-              size="sm"
-              as={Link}
-              to={`/${template.id}`}
-            >
-              <FaEye className="me-1" />
-              View
-            </Button>
+            <Link to={`/${template.id}`}>
+              <Button
+                variant="outline-primary"
+                size="sm"
+              >
+                <FaEye className="me-1" />
+                View
+              </Button>
+            </Link>
+
             <Link
               to={`/templates/${template.id}`}
               className="btn btn-primary btn-sm "

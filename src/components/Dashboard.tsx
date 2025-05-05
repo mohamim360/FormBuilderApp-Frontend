@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Tab, Tabs, Container, Card, Spinner, Alert, Row, Col, Image, Badge, Button } from 'react-bootstrap';
 import { FaUser, FaClipboard, FaList, FaPlus, FaUserShield } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -47,7 +47,7 @@ const Dashboard = () => {
 		const loadForms = async () => {
 			try {
 				const data = await fetchUserForms();
-				setForms(data?.forms || []);
+				setForms(data || []);
 			} catch (err) {
 				setError(prev => ({ ...prev, forms: err instanceof Error ? err.message : 'Failed to load forms' }));
 			} finally {
@@ -118,7 +118,7 @@ const Dashboard = () => {
 											<Col sm={4} className="fw-bold">Forms Submitted:</Col>
 											<Col sm={8}>{forms.length}</Col>
 										</Row>
-						
+
 									</Col>
 								</Row>
 							</Card.Body>
@@ -137,18 +137,23 @@ const Dashboard = () => {
 						<>
 							<div className="d-flex justify-content-between align-items-center mb-4">
 								<h2>My Templates</h2>
-								<Button as={Link} to="/template" variant="primary">
-									<FaPlus className="me-1" /> Create New Template
-								</Button>
+								<Link to="/template" >
+									<Button variant="primary">
+
+										<FaPlus className="me-1" /> Create New Template
+
+									</Button>
+								</Link>
 							</div>
 
 							{templates.length === 0 ? (
 								<Card>
 									<Card.Body className="text-center py-5">
 										<h4 className="text-muted">You haven't created any templates yet</h4>
-										<Button as={Link} to="/templates/new" variant="primary" className="mt-3">
-											Create Your First Template
-										</Button>
+										<Link to="/template" >
+											<Button variant="primary" className="mt-3">
+												Create Your First Template
+											</Button></Link>
 									</Card.Body>
 								</Card>
 							) : (
@@ -158,7 +163,7 @@ const Dashboard = () => {
 										<Col key={template.id}>
 											<Link
 												to={`/${template.id}`}
-											
+
 											>
 												<TemplateCard template={template} />            </Link>
 
@@ -180,7 +185,7 @@ const Dashboard = () => {
 						</Tab>
 					)
 				}
-		
+
 			</Tabs>
 		</Container>
 	);

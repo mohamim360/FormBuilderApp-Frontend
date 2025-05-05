@@ -59,16 +59,7 @@ const FormList: React.FC = () => {
     loadForms();
   }, []);
 
-  const handleDelete = async (formId: string) => {
-    if (window.confirm('Are you sure you want to delete this form?')) {
-      try {
-        await deleteForm(formId);
-        setForms(forms.filter(form => form.id !== formId));
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to delete form');
-      }
-    }
-  };
+
 
   if (loading) {
     return (
