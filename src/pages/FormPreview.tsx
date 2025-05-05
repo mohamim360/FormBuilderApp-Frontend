@@ -11,8 +11,11 @@ import {
   Col,
   ProgressBar,
   Stack,
-  Placeholder
+  Placeholder,
+  OverlayTrigger,
+  Tooltip
 } from 'react-bootstrap';
+import emailjs from '@emailjs/browser';
 import { useForm } from 'react-hook-form';
 import { 
   MdSend, 
@@ -23,7 +26,9 @@ import {
   MdOutlineShortText,
   MdOutlineSubject,
   MdOutlineCheckBox,
-  MdOutlineRadioButtonChecked
+  MdOutlineRadioButtonChecked,
+  MdContentCopy,
+  MdEmail
 } from 'react-icons/md';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchTemplateById, submitForm } from '../services/formService';
@@ -35,6 +40,7 @@ type FormValues = {
     value: string | number | string[] | boolean;
   }>;
   emailCopy: boolean;
+  emailAddress?: string;
 };
 
 const questionTypeIcons = {
@@ -53,6 +59,8 @@ const FormPreview: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showCopyTooltip, setShowCopyTooltip] = useState(false);
+  const [currentUrl, setCurrentUrl] = useState('');
 
   const {
     register,
@@ -63,6 +71,9 @@ const FormPreview: React.FC = () => {
   } = useForm<FormValues>({ mode: 'onChange' });
 
   useEffect(() => {
+    // Set current URL for sharing
+    setCurrentUrl(window.location.href);
+    
     const loadTemplate = async () => {
       try {
         if (!templateId) {
@@ -76,6 +87,7 @@ const FormPreview: React.FC = () => {
             value: q.type === QuestionType.CHECKBOX ? [] : '',
           })),
           emailCopy: false,
+          emailAddress: '',
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load template');
@@ -87,9 +99,15 @@ const FormPreview: React.FC = () => {
     loadTemplate();
   }, [templateId, reset]);
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(currentUrl);
+    setShowCopyTooltip(true);
+    setTimeout(() => setShowCopyTooltip(false), 2000);
+  };
+
   const onSubmit = async (data: FormValues) => {
     if (!template) return;
-
+  
     try {
       setSubmitting(true);
       
@@ -102,9 +120,9 @@ const FormPreview: React.FC = () => {
           integerValue: null,
           booleanValue: null,
         };
-
+  
         if (!answer) return baseAnswer;
-
+  
         switch (question.type) {
           case QuestionType.INTEGER:
             return {
@@ -133,16 +151,21 @@ const FormPreview: React.FC = () => {
             return baseAnswer;
         }
       });
-
+  
       const formData = {
         templateId: template.id,
         answers: answers,
         sendEmailCopy: data.emailCopy,
+        emailAddress: data.emailCopy ? data.emailAddress : undefined,
       };
-
+  
+      // First submit the form data to your backend
       await submitForm(formData);
+  
+      // If email copy is requested, send 
+  
       setShowSuccess(true);
-      setTimeout(() =>   navigate(`/forms/${formData.templateId}/success`), 3000);
+      setTimeout(() => navigate(`/forms/${formData.templateId}/success`), 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Form submission failed');
     } finally {
@@ -446,15 +469,38 @@ const FormPreview: React.FC = () => {
                   </Alert>
                 )}
 
-                {(template.tags || []).length > 0 && (
-                  <div className="d-flex flex-wrap gap-2">
-                    {(template.tags || []).map((tag, index) => (
-                      <Badge key={index} bg="light" text="dark" className="rounded-pill px-3 py-2">
-                        {renderTag(tag)}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
+                <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                  {(template.tags || []).length > 0 && (
+                    <div className="d-flex flex-wrap gap-2">
+                      {(template.tags || []).map((tag, index) => (
+                        <Badge key={index} bg="light" text="dark" className="rounded-pill px-3 py-2">
+                          {renderTag(tag)}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+
+                  {!template.isRestricted && (
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={
+                        <Tooltip id="copy-tooltip">
+                          {showCopyTooltip ? 'Copied!' : 'Copy form link'}
+                        </Tooltip>
+                      }
+                    >
+                      <Button
+                        variant="outline-secondary"
+                        size="sm"
+                        className="rounded-pill d-flex align-items-center gap-2"
+                        onClick={copyToClipboard}
+                      >
+                        <MdContentCopy size={16} />
+                        <span>Copy Link</span>
+                      </Button>
+                    </OverlayTrigger>
+                  )}
+                </div>
 
                 <Form onSubmit={handleSubmit(onSubmit)}>
                   <Stack gap={4}>
@@ -470,34 +516,30 @@ const FormPreview: React.FC = () => {
                       </div>
                     ))}
 
-                    <div className="d-flex justify-content-between align-items-center mt-4 pt-4 border-top">
-                      <Form.Check
-                        type="checkbox"
-                        id="emailCopy"
-                        label="Email me a copy of my responses"
-                        {...register('emailCopy')}
-                        className="form-switch"
-                      />
+                    <div className="mt-4 pt-4 border-top">
+                   
                       
-                      <Button
-                        variant="primary"
-                        type="submit"
-                        disabled={submitting || !isValid}
-                        className="rounded-pill px-4 py-2 d-flex align-items-center"
-                        size="lg"
-                      >
-                        {submitting ? (
-                          <>
-                            <Spinner as="span" animation="border" size="sm" className="me-2" />
-                            Submitting...
-                          </>
-                        ) : (
-                          <>
-                            <MdSend className="me-2" />
-                            Submit Form
-                          </>
-                        )}
-                      </Button>
+                      <div className="d-flex justify-content-end">
+                        <Button
+                          variant="primary"
+                          type="submit"
+                          disabled={submitting || !isValid}
+                          className="rounded-pill px-4 py-2 d-flex align-items-center"
+                          size="lg"
+                        >
+                          {submitting ? (
+                            <>
+                              <Spinner as="span" animation="border" size="sm" className="me-2" />
+                              Submitting...
+                            </>
+                          ) : (
+                            <>
+                              <MdSend className="me-2" />
+                              Submit Form
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   </Stack>
                 </Form>

@@ -13,7 +13,7 @@ export const Header = () => {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
- 
+
   const handleSignOut = () => {
     AuthService.logout();
     logout();
@@ -56,24 +56,24 @@ export const Header = () => {
         <div className="container-fluid">
           {/* Logo */}
           <Link className="navbar-brand" to="/">
-        
+
             <span className="">FormBuilder</span>
           </Link>
 
           {/* Search bar */}
           <div className="d-flex flex-grow-1 mx-4" style={{ maxWidth: '600px' }}>
-          <Form className="d-flex w-100" onSubmit={handleSearchSubmit}>
-      <Form.Control
-        type="search"
-        placeholder="Search templates..."
-        aria-label="Search"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
-      <Button variant="outline-primary" type="submit">
-        Search
-      </Button>
-    </Form>
+            <Form className="d-flex w-100" onSubmit={handleSearchSubmit}>
+              <Form.Control
+                type="search"
+                placeholder="Search templates..."
+                aria-label="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Button variant="outline-primary" type="submit">
+                Search
+              </Button>
+            </Form>
           </div>
 
           {/* Navigation items */}
@@ -81,10 +81,11 @@ export const Header = () => {
             {user ? (
               <>
                 <Nav.Item className="me-3 ">
-                  <Link to="/dashboard" className="nav-link">
-                    <FaHome className="me-1" />
-                    Dashboard
+ <Link to="/dashboard" className="nav-link">
+                    <FaHome className="me-1 mb-1" />
+                    User Dashboard
                   </Link>
+
                 </Nav.Item>
                 <Nav.Item>
                   <button
@@ -110,7 +111,7 @@ export const Header = () => {
               </Nav.Item>
             )}
           </Nav>
-       
+
         </div>
       </nav>
 

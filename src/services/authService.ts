@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api/auth';
+const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/auth`;
 
 // Add axios interceptor for token
 // services/authService.ts
@@ -41,4 +41,23 @@ export const AuthService = {
     localStorage.removeItem('token');
     delete axios.defaults.headers.common['Authorization'];
   },
+  // Add to src/services/authService.ts
+async getAllUsers() {
+  const response = await axios.get(`${API_BASE_URL}/users`);
+  return response.data;
+},
+
+async updateUserRole(userId: string, role: 'USER' | 'ADMIN') {
+  const response = await axios.patch(`${API_BASE_URL}/users/${userId}/role`, { role });
+  return response.data;
+},
+
+async updateUserStatus(userId: string, blocked: boolean) {
+  const response = await axios.patch(`${API_BASE_URL}/users/${userId}/status`, { blocked });
+  return response.data;
+},
+
+async deleteUser(userId: string) {
+  await axios.delete(`${API_BASE_URL}/users/${userId}`);
+},
 };

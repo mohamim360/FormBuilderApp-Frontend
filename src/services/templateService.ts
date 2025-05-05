@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Template } from '../types';
 
-const API_BASE_URL = 'http://localhost:5000/api/templates';
+const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/templates`;
 
 export const TemplateService = {
   async createTemplate(templateData: any) {

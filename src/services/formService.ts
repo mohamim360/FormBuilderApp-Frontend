@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { Form, FormSubmitData, Template } from '../types/types';
 
-const API_BASE_URL = 'http://localhost:5000/api'; // Adjust based on your backend URL
+const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api`; // Adjust based on your backend URL
 
 const api = axios.create({
   baseURL: API_BASE_URL,

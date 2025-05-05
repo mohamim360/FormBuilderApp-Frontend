@@ -17,6 +17,7 @@ import PublicTemplateView from './components/PublicTemplateView'
 import TemplateResponses from './components/TemplateResponses'
 import Dashboard from './components/Dashboard'
 
+
 function App() {
 
   return (
@@ -38,6 +39,7 @@ function App() {
                 <Dashboard />
               </PrivateRoute>
             } />
+          
             <Route path="/forms" element={
               <PrivateRoute>
                 <FormList />

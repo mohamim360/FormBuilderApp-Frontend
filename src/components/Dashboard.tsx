@@ -1,7 +1,7 @@
 // src/pages/Dashboard.tsx
 import React, { useState, useEffect } from 'react';
 import { Tab, Tabs, Container, Card, Spinner, Alert, Row, Col, Image, Badge, Button } from 'react-bootstrap';
-import { FaUser, FaClipboard, FaList, FaPlus, FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import { FaUser, FaClipboard, FaList, FaPlus, FaEdit, FaTrash, FaEye, FaUserShield } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { TemplateService } from '../services/templateService';
@@ -9,6 +9,7 @@ import { fetchUserForms } from '../services/formService';
 import { Template, Form } from '../types/types';
 import TemplateCard from '../components/TemplateCard';
 import FormList from './FormList';
+import AdminDashboard from './AdminDashboard';
 
 const Dashboard = () => {
 	const { user } = useAuth();
@@ -173,6 +174,14 @@ const Dashboard = () => {
 				<Tab eventKey="forms" title={<><FaList className="me-1" /> My Forms</>}>
 					<FormList />
 				</Tab>
+				{
+					user?.role === 'ADMIN' && (
+						<Tab eventKey="admin" title={<><FaUserShield className="me-1" /> Admin</>}>
+							<AdminDashboard />
+						</Tab>
+					)
+				}
+		
 			</Tabs>
 		</Container>
 	);

@@ -6,7 +6,6 @@ import { useAuth } from '../context/AuthContext'
 import { Button, Container, Row, Col, Card, Badge, Form, ListGroup, Spinner, Alert } from 'react-bootstrap'
 import { FaHeart, FaRegHeart, FaComment, FaUser, FaStar, FaShare } from 'react-icons/fa'
 import moment from 'moment'
-import TemplateResponses from './TemplateResponses'
 
 export default function PublicTemplateView() {
   const { templateId } = useParams()

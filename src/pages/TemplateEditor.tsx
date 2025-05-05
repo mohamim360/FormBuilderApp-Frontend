@@ -20,10 +20,11 @@ import {
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { useForm, useFieldArray, Control, UseFormRegister } from 'react-hook-form';
 import { MdDragIndicator, MdAdd, MdDelete, MdImage, MdSettings } from 'react-icons/md';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { TemplateService } from '../services/templateService';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+
 
 type QuestionType = 'SINGLE_LINE_TEXT' | 'MULTI_LINE_TEXT' | 'INTEGER' | 'CHECKBOX' | 'SINGLE_CHOICE';
 type TemplateAccess = 'PUBLIC' | 'RESTRICTED';
@@ -282,7 +283,7 @@ const TemplateEditor = () => {
               {...register('title', { required: 'Title is required' })}
             />
             <div>
-          
+
               <Button
                 variant="primary"
                 size="sm"
@@ -429,12 +430,7 @@ const TemplateEditor = () => {
                   </Dropdown>
                 </div>
               </Tab>
-              <Tab eventKey="responses" title="Responses">
-                <div className="text-center py-5">
-                  <h4>No responses yet</h4>
-                  <p className="text-muted">Share your form to start collecting responses</p>
-                </div>
-              </Tab>
+          
             </Tabs>
           </Card.Body>
         </Card>
