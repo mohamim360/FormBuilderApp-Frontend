@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { TemplateService } from '../services/templateService'
 import { useAuth } from '../context/AuthContext'
-import { Container, Row, Col, Card, Table, Badge, Spinner, Alert, Button } from 'react-bootstrap'
+import { Container, Row, Col, Card, Table, Badge, Spinner, Alert } from 'react-bootstrap'
 import moment from 'moment'
 
 export default function TemplateResponses() {

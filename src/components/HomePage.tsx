@@ -1,9 +1,8 @@
-// src/pages/Home.tsx
 import { useEffect, useState } from "react";
 import { Card, Container, Row, Col, Badge, Spinner, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { FaHeart, FaRegHeart, FaUser, FaStar, FaEye } from "react-icons/fa";
+import { FaHeart, FaUser, FaStar, FaEye } from "react-icons/fa";
 import moment from "moment";
 import './TagCloud.css'
 import { Template } from "../types/types";

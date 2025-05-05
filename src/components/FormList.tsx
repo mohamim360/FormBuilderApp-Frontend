@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Card, Button, Spinner, Alert, Table, Badge } from 'react-bootstrap';
+import { Container, Card, Spinner, Alert, Table, Badge } from 'react-bootstrap';
 import { fetchUserForms, deleteForm } from '../services/formService';
 import { Form } from '../types/types';
-import { Link } from 'react-router-dom';
-import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
+
 import {  TemplateService } from '../services/templateService';
 
 interface FormWithTemplate extends Form {

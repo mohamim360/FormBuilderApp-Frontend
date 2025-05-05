@@ -3,10 +3,10 @@ import axios from 'axios';
 const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/auth`;
 
 // Add axios interceptor for token
-// services/authService.ts
+
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
-  console.log('Interceptor - Token:', token); // Add this line for debugging
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

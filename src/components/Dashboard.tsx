@@ -1,7 +1,6 @@
-// src/pages/Dashboard.tsx
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { Tab, Tabs, Container, Card, Spinner, Alert, Row, Col, Image, Badge, Button } from 'react-bootstrap';
-import { FaUser, FaClipboard, FaList, FaPlus, FaEdit, FaTrash, FaEye, FaUserShield } from 'react-icons/fa';
+import { FaUser, FaClipboard, FaList, FaPlus, FaUserShield } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { TemplateService } from '../services/templateService';
@@ -188,3 +187,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

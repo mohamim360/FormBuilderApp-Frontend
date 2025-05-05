@@ -15,7 +15,6 @@ import {
   OverlayTrigger,
   Tooltip
 } from 'react-bootstrap';
-import emailjs from '@emailjs/browser';
 import { useForm } from 'react-hook-form';
 import { 
   MdSend, 
@@ -28,7 +27,6 @@ import {
   MdOutlineCheckBox,
   MdOutlineRadioButtonChecked,
   MdContentCopy,
-  MdEmail
 } from 'react-icons/md';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchTemplateById, submitForm } from '../services/formService';

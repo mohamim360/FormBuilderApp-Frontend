@@ -1,7 +1,6 @@
-// src/components/TemplateCard.tsx
 import { Link } from 'react-router-dom'
 import { Template } from '../types/types'
-import { FaHeart, FaRegHeart, FaUser, FaClone, FaTags } from 'react-icons/fa'
+import { FaHeart, FaRegHeart, FaClone, FaTags } from 'react-icons/fa'
 
 interface TemplateCardProps {
   template: Template

@@ -1,6 +1,5 @@
-// src/services/userService.ts
+
 import axios from 'axios';
-// src/types/types.ts
 export type UserRole = 'USER' | 'ADMIN';
 
 export interface User {

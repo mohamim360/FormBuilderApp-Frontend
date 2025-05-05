@@ -20,7 +20,7 @@ import {
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { useForm, useFieldArray, Control, UseFormRegister } from 'react-hook-form';
 import { MdDragIndicator, MdAdd, MdDelete, MdImage, MdSettings } from 'react-icons/md';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { TemplateService } from '../services/templateService';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -126,7 +126,7 @@ const TemplateEditor = () => {
         } catch (error) {
           console.error('Failed to load template:', error);
           toast.error('Failed to load template');
-          navigate('/templates');
+          navigate('/');
         } finally {
           setIsLoading(false);
         }
@@ -164,7 +164,7 @@ const TemplateEditor = () => {
       } else {
         await TemplateService.createTemplate(formattedData);
         toast.success('Template created successfully!');
-        navigate('/templates');
+        navigate('/');
       }
     } catch (error) {
       console.error('Error saving template:', error);
@@ -174,21 +174,6 @@ const TemplateEditor = () => {
     }
   };
 
-  const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this template?')) {
-      setIsLoading(true);
-      try {
-        await TemplateService.deleteTemplate(id!);
-        toast.success('Template deleted successfully!');
-        navigate('/templates');
-      } catch (error) {
-        console.error('Error deleting template:', error);
-        toast.error('Failed to delete template');
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;

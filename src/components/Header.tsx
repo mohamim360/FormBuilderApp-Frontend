@@ -1,4 +1,3 @@
-// src/components/Header.tsx
 import { useState } from "react";
 import { Button, Form, Modal, Nav, Spinner } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";

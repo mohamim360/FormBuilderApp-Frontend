@@ -1,4 +1,3 @@
-// src/components/RegisterForm.tsx
 import React, { useState } from 'react';
 import { Button, Form, Container, Card, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
