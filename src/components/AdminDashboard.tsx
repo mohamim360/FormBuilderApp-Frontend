@@ -1,7 +1,7 @@
 // src/pages/AdminDashboard.tsx
 import React, { useState, useEffect } from 'react';
-import { Tab, Tabs, Container, Card, Spinner, Alert, Table, Button, Badge, Modal, Form } from 'react-bootstrap';
-import { FaUsers, FaClipboard, FaTrash, FaEdit, FaLock, FaUnlock } from 'react-icons/fa';
+import {  Container, Card, Alert, Table, Button, Badge, Modal, Form } from 'react-bootstrap';
+import {  FaTrash, FaEdit } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { userService } from '../services/userService';
 
@@ -45,6 +45,7 @@ const AdminDashboard: React.FC = () => {
 		searchTerm: '',
 	});
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [activeTab, setActiveTab] = useState<'users' | 'templates'>('users');
 
 	useEffect(() => {
