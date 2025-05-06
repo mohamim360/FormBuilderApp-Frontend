@@ -415,7 +415,7 @@ const TemplateEditor = () => {
                   </Dropdown>
                 </div>
               </Tab>
-          
+
             </Tabs>
           </Card.Body>
         </Card>
@@ -588,7 +588,8 @@ interface OptionsEditorProps {
 const OptionsEditor: React.FC<OptionsEditorProps> = ({ control, register, questionIndex }) => {
   const { fields, append, remove } = useFieldArray({
     control,
-    name: `questions.${questionIndex}.options` as const
+    name: `questions.${questionIndex}.options` as never, // Use 'as never' as a workaround
+    rules: { required: "At least one option is required" }
   });
 
   return (
@@ -615,7 +616,7 @@ const OptionsEditor: React.FC<OptionsEditorProps> = ({ control, register, questi
       <Button
         variant="outline-primary"
         size="sm"
-        onClick={() => append(`Option ${fields.length + 1}`)}
+        onClick={() => append('')} // Append empty string
       >
         <MdAdd /> Add Option
       </Button>
