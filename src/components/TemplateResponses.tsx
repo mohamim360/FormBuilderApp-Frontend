@@ -21,13 +21,12 @@ export default function TemplateResponses() {
       try {
         setLoading(true)
         // Fetch template first to get questions structure
-        const templateData = await TemplateService.getTemplate(templateId!, user?.userId)
+        const templateData = await TemplateService.getTemplate(templateId!)
         setTemplate(templateData)
         
         // Then fetch responses
         const formsData = await TemplateService.getTemplateForms(
           templateId!, 
-          user?.userId || '', 
           currentPage, 
           limit
         )

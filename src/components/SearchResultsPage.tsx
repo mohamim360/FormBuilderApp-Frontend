@@ -18,7 +18,6 @@ export default function SearchResultsPage() {
   const [error, setError] = useState('')
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
-  const [isSearchFocused, setIsSearchFocused] = useState(false)
 
   useEffect(() => {
     const searchTemplates = async () => {
@@ -91,8 +90,6 @@ export default function SearchResultsPage() {
               placeholder="Search templates..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              onFocus={() => setIsSearchFocused(true)}
-              onBlur={() => setIsSearchFocused(false)}
               className="ps-5 py-3 rounded-pill shadow-sm"
               style={{ border: '1px solid #dee2e6' }}
             />
@@ -170,7 +167,6 @@ export default function SearchResultsPage() {
         <Row className="justify-content-center py-5">
           <Col md={8} className="text-center">
             <div className="py-5">
-             
               <h4 className="mb-3">No templates found matching your search</h4>
               <p className="text-muted mb-4">
                 Try different keywords or browse our popular templates

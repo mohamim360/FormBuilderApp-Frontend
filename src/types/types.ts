@@ -53,19 +53,19 @@ export interface Tag {
 }
 
 export interface Template {
-  id: string;
+  id?: string;
   title: string;
   description: string;
   topic: string;
   imageUrl?: string;
   isPublic: boolean;
   access: TemplateAccess;
-  createdAt: Date;
-  updatedAt: Date;
-  author: {
-    id: string;
-    name: string;
-    email: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  author?: {
+    id?: string;
+    name?: string;
+    email?: string;
   };
   questions: Question[];
   tags: Tag[];
@@ -74,9 +74,9 @@ export interface Template {
     name: string;
     email: string;
   }[];
-  _count: {
-    forms: number;
-    likes: number;
+  _count?: {
+    forms?: number;
+    likes?: number;
   };
 }
 

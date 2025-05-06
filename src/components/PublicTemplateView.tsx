@@ -13,7 +13,7 @@ export default function PublicTemplateView() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [comment, setComment] = useState('')
-  const [comments, setComments] = useState<any[]>([])
+  const [comments, setComments] = useState<{ id: string; user: { name: string }; content: string; createdAt: string }[]>([])
   const [isLiked, setIsLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(0)
   const [commentLoading, setCommentLoading] = useState(false)
@@ -34,7 +34,7 @@ export default function PublicTemplateView() {
 
         // Check if user liked the template
         if (user) {
-          const liked = await TemplateService.checkUserLike(templateId!, user.userId)
+          const liked = await TemplateService.checkUserLike(templateId!)
           setIsLiked(!!liked)
         }
       } catch (err) {
@@ -57,11 +57,11 @@ export default function PublicTemplateView() {
     try {
       setLikeLoading(true)
       if (isLiked) {
-        await TemplateService.unlikeTemplate(templateId!, user.userId)
-        setLikeCount(prev => prev - 1)  // Decrement when unliking
+        await TemplateService.unlikeTemplate(templateId!)
+        setLikeCount(prev => prev - 1)
       } else {
-        await TemplateService.likeTemplate(templateId!, user.userId)
-        setLikeCount(prev => prev + 1)  // Increment when liking
+        await TemplateService.likeTemplate(templateId!)
+        setLikeCount(prev => prev + 1)
       }
       setIsLiked(!isLiked)
     } catch (error) {
@@ -71,13 +71,14 @@ export default function PublicTemplateView() {
       setLikeLoading(false)
     }
   }
+
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user || !comment.trim()) return
 
     try {
       setCommentLoading(true)
-      const newComment = await TemplateService.addComment(templateId!, user.userId, comment)
+      const newComment = await TemplateService.addComment(templateId!, comment)
       setComments(prev => [newComment, ...prev])
       setComment('')
     } catch (error) {
@@ -163,43 +164,43 @@ export default function PublicTemplateView() {
 
               <div className="d-flex gap-2">
                 {user ? (
-                  <Button
-                    as={Link}
-                    to={`/templates/${templateId}`}
+                  <Link to={`/templates/${templateId}`}>  <Button
+
+
                     variant="primary"
                     size="lg"
                   >
                     Use this template
-                  </Button>
+                  </Button></Link>
+
                 ) : (
-                  <Button
-                    as={Link}
-                    to="/login"
-                    variant="primary"
-                    size="lg"
-                  >
-                    Login to use template
-                  </Button>
+                  <Link to="/login">
+                    <Button
+                      variant="primary"
+                      size="lg"
+                    >
+                      Login to use template
+                    </Button>
+                  </Link>
+
                 )}
                 {user && template.author?.id === user.id && (
-                  <Button
-                    as={Link}
-                    to={`/templates/${templateId}/responses`}
+                  <Link to={`/templates/${templateId}/responses`}>  <Button
                     variant="outline-primary"
                     size="lg"
                   >
                     View Responses
-                  </Button>
+                  </Button></Link>
+
                 )}
                 {user && (template.author?.id === user.id || user.role === 'ADMIN') && (
-                  <Button
-                    as={Link}
-                    to={`/templates/${templateId}/edit`}
+                  <Link to={`/templates/${templateId}/edit`}>  <Button
                     variant="outline-secondary"
                     size="lg"
                   >
                     Edit Template
-                  </Button>
+                  </Button></Link>
+
                 )}
               </div>
             </Card.Body>
