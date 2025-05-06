@@ -415,7 +415,7 @@ const TemplateEditor = () => {
                   </Dropdown>
                 </div>
               </Tab>
-
+          
             </Tabs>
           </Card.Body>
         </Card>

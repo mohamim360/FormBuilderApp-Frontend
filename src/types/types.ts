@@ -103,10 +103,10 @@ export interface Answer {
 
 export interface Form {
   id: string;
-  templateId: string;
-  userId: string;
-  createdAt: Date;
-  updatedAt: Date;
+  templateId?: string;
+  userId?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
   answers: Answer[];
   template?: {
     id: string;

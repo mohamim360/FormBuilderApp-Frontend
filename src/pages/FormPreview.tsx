@@ -128,7 +128,7 @@ const FormPreview: React.FC = () => {
               integerValue: Number(answer.value) || 0
             };
 
-          case QuestionType.CHECKBOX:
+          case QuestionType.CHECKBOX: {
             const checkboxValues = Array.isArray(answer.value)
               ? answer.value
               : [answer.value].filter(Boolean);
@@ -136,6 +136,7 @@ const FormPreview: React.FC = () => {
               ...baseAnswer,
               textValue: checkboxValues.join(', ')
             };
+          }
 
           case QuestionType.SINGLE_LINE_TEXT:
           case QuestionType.MULTI_LINE_TEXT:

@@ -61,7 +61,12 @@ const AdminDashboard: React.FC = () => {
 		try {
 			setState(prev => ({ ...prev, loading: { ...prev.loading, users: true } }));
 			const response = await userService.getAllUsers();
-			setState(prev => ({ ...prev, users: response.users, loading: { ...prev.loading, users: false } }));
+			setState(prev => ({
+				...prev,
+				users: response.users as unknown as User[],
+				loading: { ...prev.loading, users: false },
+			}));
+			
 		} catch (err) {
 			setState(prev => ({
 				...prev,
