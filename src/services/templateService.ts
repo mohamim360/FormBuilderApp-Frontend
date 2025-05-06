@@ -4,7 +4,7 @@ import { Template } from '../types/types';
 const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/templates`;
 
 export const TemplateService = {
-  async createTemplate(templateData: Template) {
+  async createTemplate(templateData: unknown) {
     try {
       const response = await axios.post(API_BASE_URL, templateData);
       return response.data;
@@ -14,7 +14,7 @@ export const TemplateService = {
     }
   },
 
-  async updateTemplate(id: string, templateData: Template) {
+  async updateTemplate(id: unknown, templateData: unknown) {
     try {
       const response = await axios.put(`${API_BASE_URL}/${id}`, templateData);
       return response.data;

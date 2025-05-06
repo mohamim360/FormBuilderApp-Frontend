@@ -1,10 +1,10 @@
 // api.ts
-import axios from 'axios';
-import { Form, Template } from '../types/types';
+import axios from "axios";
+import { Form, Template } from "../types/types";
 
 const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api`; // Adjust based on your backend URL
 export interface PaginatedResponse<T> {
-  forms: T[];           // was: `data: T[]`
+  forms: T[]; // was: `data: T[]`
   total: number;
   page: number;
   limit: number;
@@ -14,13 +14,13 @@ export interface PaginatedResponse<T> {
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // Add auth token to requests
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -28,7 +28,7 @@ api.interceptors.request.use((config) => {
 });
 
 export const fetchTemplates = async (): Promise<Template[]> => {
-  const response = await api.get('/templates');
+  const response = await api.get("/templates");
   return response.data;
 };
 
@@ -45,11 +45,11 @@ export interface PaginatedForms {
 }
 
 export const fetchUserForms = async (): Promise<PaginatedForms> => {
-  const response = await api.get('/forms/user');
+  const response = await api.get("/forms/user");
   return response.data;
 };
 export const fetchUserForms_dash = async (): Promise<Form[]> => {
-  const response = await api.get('/forms/user');
+  const response = await api.get("/forms/user");
   return response.data;
 };
 
@@ -58,8 +58,8 @@ export const fetchFormById = async (id: string): Promise<Form> => {
   return response.data;
 };
 
-export const submitForm = async (formData: Omit<Form, 'id'>): Promise<Form> => {
-  const response = await api.post<Form>('/forms', formData);
+export const submitForm = async (formData: unknown): Promise<Form> => {
+  const response = await api.post<Form>("/forms", formData);
   return response.data;
 };
 

@@ -37,8 +37,7 @@ type FormValues = {
     questionId: string;
     value: string | number | string[] | boolean;
   }>;
-  emailCopy: boolean;
-  emailAddress?: string;
+
 };
 
 const questionTypeIcons = {
@@ -84,8 +83,8 @@ const FormPreview: React.FC = () => {
             questionId: q.id,
             value: q.type === QuestionType.CHECKBOX ? [] : '',
           })),
-          emailCopy: false,
-          emailAddress: '',
+       
+       
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load template');
@@ -154,8 +153,7 @@ const FormPreview: React.FC = () => {
       const formData = {
         templateId: template.id,
         answers: answers,
-        sendEmailCopy: data.emailCopy,
-        emailAddress: data.emailCopy ? data.emailAddress : undefined,
+      
       };
 
       // First submit the form data to your backend
