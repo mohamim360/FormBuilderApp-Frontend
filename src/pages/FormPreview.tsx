@@ -30,7 +30,7 @@ import {
 } from 'react-icons/md';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchTemplateById, submitForm } from '../services/formService';
-import { Template, QuestionType } from '../types/types';
+import { Template, QuestionType ,TemplateAccess} from '../types/types';
 
 type FormValues = {
   answers: Array<{
@@ -171,7 +171,7 @@ const FormPreview: React.FC = () => {
     }
   };
 
-  const renderQuestionInput = (question: any, index: number) => {
+  const renderQuestionInput = (question: Template['questions'][number], index: number) => {
     const commonProps = {
       key: question.id,
       className: "mb-3",
@@ -318,7 +318,7 @@ const FormPreview: React.FC = () => {
     }
   };
 
-  const renderTag = (tag: any) => {
+  const renderTag = (tag: { name?: string; title?: string; id?: string } | string) => {
     if (typeof tag === 'string') return tag;
     if (typeof tag === 'object' && tag !== null) {
       return tag.name || tag.title || tag.id || 'Untagged';
@@ -478,7 +478,7 @@ const FormPreview: React.FC = () => {
                     </div>
                   )}
 
-                  {!template.isRestricted && (
+                  {template.access !== TemplateAccess.RESTRICTED && (
                     <OverlayTrigger
                       placement="top"
                       overlay={
