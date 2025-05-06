@@ -4,7 +4,7 @@ import { FaUser, FaClipboard, FaList, FaPlus, FaUserShield } from 'react-icons/f
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { TemplateService } from '../services/templateService';
-import { fetchUserForms } from '../services/formService';
+import { fetchUserForms_dash } from '../services/formService';
 import { Template, Form } from '../types/types';
 import TemplateCard from '../components/TemplateCard';
 import FormList from './FormList';
@@ -46,7 +46,7 @@ const Dashboard = () => {
 
 		const loadForms = async () => {
 			try {
-				const data = await fetchUserForms();
+				const data = await fetchUserForms_dash();
 				setForms(data || []);
 			} catch (err) {
 				setError(prev => ({ ...prev, forms: err instanceof Error ? err.message : 'Failed to load forms' }));

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Card, Spinner, Alert, Table, Badge } from 'react-bootstrap';
-import { fetchUserForms, deleteForm } from '../services/formService';
-import { Form } from '../types/types';
+import { fetchUserForms } from '../services/formService';
+import { Form , Template } from '../types/types';
+import { TemplateService } from '../services/templateService';
 
-import {  TemplateService } from '../services/templateService';
-
-interface FormWithTemplate extends Form {
-  template?: {
+interface FormWithMinimalTemplate extends Omit<Form, 'template'> {
+  template: {
     title: string;
     description: string;
     tags: string[];
@@ -14,7 +13,7 @@ interface FormWithTemplate extends Form {
 }
 
 const FormList: React.FC = () => {
-  const [forms, setForms] = useState<FormWithTemplate[]>([]);
+  const [forms, setForms] = useState<FormWithMinimalTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,18 +21,19 @@ const FormList: React.FC = () => {
     const loadForms = async () => {
       try {
         setLoading(true);
-        const data = await fetchUserForms();
+        const rawForms = await fetchUserForms();
+console.log('Fetched forms:', rawForms); // Debugging line
         const formsWithTemplates = await Promise.all(
-          (data?.forms || []).map(async (form) => {
+          rawForms.forms.map(async (form: Form) => {
             try {
-              const template = await TemplateService.getTemplate(form.templateId);
+              const template: Template = await TemplateService.getTemplate(form.templateId);
               return {
                 ...form,
                 template: {
-                  title: template?.title || 'Untitled Template',
-                  description: template?.description || '',
-                  tags: template?.tags?.map(t => t.name) || [],
-                }
+                  title: template.title || 'Untitled Template',
+                  description: template.description || '',
+                  tags: template.tags?.map(t => t.name) || [],
+                },
               };
             } catch (err) {
               console.error(`Error loading template for form ${form.id}:`, err);
@@ -43,11 +43,12 @@ const FormList: React.FC = () => {
                   title: 'Template not available',
                   description: '',
                   tags: [],
-                }
+                },
               };
             }
           })
         );
+
         setForms(formsWithTemplates);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load forms');
@@ -58,8 +59,6 @@ const FormList: React.FC = () => {
 
     loadForms();
   }, []);
-
-
 
   if (loading) {
     return (
@@ -84,7 +83,6 @@ const FormList: React.FC = () => {
       <Card>
         <Card.Header className="d-flex justify-content-between align-items-center">
           <h3>My Forms</h3>
-       
         </Card.Header>
         <Card.Body>
           {forms.length === 0 ? (
@@ -97,23 +95,21 @@ const FormList: React.FC = () => {
                   <th>Template</th>
                   <th>Submitted</th>
                   <th>Tags</th>
-           
                 </tr>
               </thead>
               <tbody>
                 {forms.map((form) => (
                   <tr key={form.id}>
-                    <td>{form.template?.title || 'Untitled Form'}</td>
-                    <td>{form.template?.description.substring(0, 50)}...</td>
-                    <td>{form.createdAt ? new Date(form.createdAt).toLocaleDateString() : 'N/A'}</td>
+                    <td>{form.template.title || 'Untitled Form'}</td>
+                    <td>{form.template.description.substring(0, 50)}...</td>
+                    <td>{new Date(form.createdAt).toLocaleDateString()}</td>
                     <td>
-                      {form.template?.tags.map((tag, index) => (
+                      {form.template.tags.map((tag, index) => (
                         <Badge key={index} bg="secondary" className="me-1">
                           {tag}
                         </Badge>
                       ))}
                     </td>
-            
                   </tr>
                 ))}
               </tbody>

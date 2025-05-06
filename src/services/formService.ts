@@ -3,6 +3,13 @@ import axios from 'axios';
 import { Form, Template } from '../types/types';
 
 const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api`; // Adjust based on your backend URL
+export interface PaginatedResponse<T> {
+  forms: T[];           // was: `data: T[]`
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -29,8 +36,19 @@ export const fetchTemplateById = async (id: string): Promise<Template> => {
   const response = await api.get(`/templates/${id}`);
   return response.data;
 };
+export interface PaginatedForms {
+  forms: Form[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
 
-export const fetchUserForms = async (): Promise<Form[]> => {
+export const fetchUserForms = async (): Promise<PaginatedForms> => {
+  const response = await api.get('/forms/user');
+  return response.data;
+};
+export const fetchUserForms_dash = async (): Promise<Form[]> => {
   const response = await api.get('/forms/user');
   return response.data;
 };

@@ -3,6 +3,7 @@ import { Button, Form, Container, Card, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthService } from '../services/authService';
 import { useAuth } from '../context/AuthContext';
+import { AxiosError } from 'axios';
 
 const RegisterForm: React.FC = () => {
   const [name, setName] = useState('');
@@ -29,10 +30,12 @@ const RegisterForm: React.FC = () => {
       const { user, token } = await AuthService.register(email, name, password);
       authLogin(user, token);
       navigate('/dashboard'); // Redirect to dashboard after registration
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      setError(error.response?.data?.message || 'Registration failed. Please try again.');
       setLoading(false);
     }
+    
   };
 
   return (

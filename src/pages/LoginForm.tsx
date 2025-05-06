@@ -3,6 +3,7 @@ import { Button, Form, Container, Card, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthService } from '../services/authService';
 import { useAuth } from '../context/AuthContext';
+import { AxiosError } from 'axios';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -21,8 +22,9 @@ const LoginForm: React.FC = () => {
       const { user, token } = await AuthService.login(email, password);
       authLogin(user, token);
       navigate('/'); // Redirect to dashboard after login
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+    } catch (err) {
+       const error = err as AxiosError<{ message: string }>;
+      setError(error.response?.data?.message || 'Login failed. Please try again.');
       setLoading(false);
     }
   };
