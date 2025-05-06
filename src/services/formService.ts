@@ -1,6 +1,6 @@
 // api.ts
 import axios from 'axios';
-import { Form, FormSubmitData, Template } from '../types/types';
+import { Form, Template } from '../types/types';
 
 const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api`; // Adjust based on your backend URL
 
@@ -40,15 +40,15 @@ export const fetchFormById = async (id: string): Promise<Form> => {
   return response.data;
 };
 
-export const submitForm = async (formData: FormSubmitData): Promise<Form> => {
-  const response = await api.post('/forms', formData);
+export const submitForm = async (formData: Omit<Form, 'id'>): Promise<Form> => {
+  const response = await api.post<Form>('/forms', formData);
   return response.data;
 };
 
-export const updateForm = async (id: string, formData: FormSubmitData): Promise<Form> => {
-  const response = await api.put(`/forms/${id}`, formData);
-  return response.data;
-};
+// export const updateForm = async (id: string, formData): Promise<Form> => {
+//   const response = await api.put(`/forms/${id}`, formData);
+//   return response.data;
+// };
 
 export const deleteForm = async (id: string): Promise<void> => {
   await api.delete(`/forms/${id}`);

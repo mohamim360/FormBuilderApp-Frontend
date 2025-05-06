@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { Template } from '../types';
+import { Template } from '../types/types';
 
 const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/templates`;
 
 export const TemplateService = {
-  async createTemplate(templateData: any) {
+  async createTemplate(templateData: Template) {
     try {
       const response = await axios.post(API_BASE_URL, templateData);
       return response.data;
@@ -14,7 +14,7 @@ export const TemplateService = {
     }
   },
 
-  async updateTemplate(id: string, templateData: any) {
+  async updateTemplate(id: string, templateData: Template) {
     try {
       const response = await axios.put(`${API_BASE_URL}/${id}`, templateData);
       return response.data;
@@ -123,7 +123,7 @@ async getComments(templateId: string, page: number = 1, limit: number = 10) {
   }
 },
 
-async addComment(templateId: string, userId: string, content: string) {
+async addComment(templateId: string, content: string) {
   try {
     const response = await axios.post(
       `${API_BASE_URL}/${templateId}/comments`, 
@@ -170,7 +170,7 @@ async checkUserLike(templateId: string) {
     throw error;
   }
 },
-async getTemplateForms(templateId: string, userId: string, page: number = 1, limit: number = 10) {
+async getTemplateForms(templateId: string, page: number = 1, limit: number = 10) {
   try {
     const response = await axios.get(`${API_BASE_URL}/${templateId}/forms`, {
       params: { page, limit },
@@ -183,7 +183,7 @@ async getTemplateForms(templateId: string, userId: string, page: number = 1, lim
   }
 },
 
-async getTemplateStats(templateId: string, userId: string) {
+async getTemplateStats(templateId: string) {
   try {
     const response = await axios.get(`${API_BASE_URL}/${templateId}/stats`, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }

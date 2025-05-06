@@ -16,9 +16,9 @@ import {
   Tooltip
 } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import { 
-  MdSend, 
-  MdOutlineDescription, 
+import {
+  MdSend,
+  MdOutlineDescription,
   MdCheckCircle,
   MdOutlineImage,
   MdOutlineNumbers,
@@ -65,13 +65,13 @@ const FormPreview: React.FC = () => {
     handleSubmit,
     formState: { errors, isValid },
     reset,
-    watch
+
   } = useForm<FormValues>({ mode: 'onChange' });
 
   useEffect(() => {
     // Set current URL for sharing
     setCurrentUrl(window.location.href);
-    
+
     const loadTemplate = async () => {
       try {
         if (!templateId) {
@@ -105,38 +105,38 @@ const FormPreview: React.FC = () => {
 
   const onSubmit = async (data: FormValues) => {
     if (!template) return;
-  
+
     try {
       setSubmitting(true);
-      
+
       const answers = template.questions.map((question) => {
         const answer = data.answers.find(a => a.questionId === question.id);
-        
+
         const baseAnswer = {
           questionId: question.id,
           textValue: null,
           integerValue: null,
           booleanValue: null,
         };
-  
+
         if (!answer) return baseAnswer;
-  
+
         switch (question.type) {
           case QuestionType.INTEGER:
             return {
               ...baseAnswer,
               integerValue: Number(answer.value) || 0
             };
-            
+
           case QuestionType.CHECKBOX:
-            const checkboxValues = Array.isArray(answer.value) 
-              ? answer.value 
+            const checkboxValues = Array.isArray(answer.value)
+              ? answer.value
               : [answer.value].filter(Boolean);
             return {
               ...baseAnswer,
               textValue: checkboxValues.join(', ')
             };
-            
+
           case QuestionType.SINGLE_LINE_TEXT:
           case QuestionType.MULTI_LINE_TEXT:
           case QuestionType.SINGLE_CHOICE:
@@ -144,24 +144,24 @@ const FormPreview: React.FC = () => {
               ...baseAnswer,
               textValue: String(answer.value || '')
             };
-            
+
           default:
             return baseAnswer;
         }
       });
-  
+
       const formData = {
         templateId: template.id,
         answers: answers,
         sendEmailCopy: data.emailCopy,
         emailAddress: data.emailCopy ? data.emailAddress : undefined,
       };
-  
+
       // First submit the form data to your backend
       await submitForm(formData);
-  
+
       // If email copy is requested, send 
-  
+
       setShowSuccess(true);
       setTimeout(() => navigate(`/forms/${formData.templateId}/success`), 2000);
     } catch (err) {
@@ -187,7 +187,7 @@ const FormPreview: React.FC = () => {
           {questionTypeIcons[question.type as QuestionType] || <MdOutlineDescription />}
         </span>
         <h5 className="mb-0">
-          {question.title} 
+          {question.title}
           {question.isRequired && <span className="text-danger ms-1">*</span>}
         </h5>
       </div>
@@ -270,7 +270,7 @@ const FormPreview: React.FC = () => {
               </p>
             )}
             <div className="border rounded p-3 bg-light bg-opacity-10">
-              {question.options?.map((option, optIndex) => (
+              {question.options?.map((option: string, optIndex: number) => (
                 <Form.Check
                   key={optIndex}
                   type="checkbox"
@@ -296,7 +296,7 @@ const FormPreview: React.FC = () => {
               </p>
             )}
             <div className="border rounded p-3 bg-light bg-opacity-10">
-              {question.options?.map((option, optIndex) => (
+              {question.options?.map((option: string, optIndex: number) => (
                 <Form.Check
                   key={optIndex}
                   type="radio"
@@ -366,8 +366,8 @@ const FormPreview: React.FC = () => {
               <p>{error}</p>
               <hr />
               <div className="d-flex justify-content-end">
-                <Button 
-                  variant="outline-danger" 
+                <Button
+                  variant="outline-danger"
                   onClick={() => window.location.reload()}
                   className="rounded-pill px-4"
                 >
@@ -396,8 +396,8 @@ const FormPreview: React.FC = () => {
               <p>The requested form template could not be found.</p>
               <hr />
               <div className="d-flex justify-content-end">
-                <Button 
-                  variant="outline-warning" 
+                <Button
+                  variant="outline-warning"
                   onClick={() => navigate('/')}
                   className="rounded-pill px-4"
                 >
@@ -449,7 +449,7 @@ const FormPreview: React.FC = () => {
                 </div>
               </div>
             )}
-            
+
             {!template.imageUrl && (
               <Card.Header className="bg-primary bg-opacity-10 py-4 border-bottom-0">
                 <h1 className="h2 mb-0 text-center">{template.title}</h1>
@@ -505,7 +505,7 @@ const FormPreview: React.FC = () => {
                     {template.questions.map((question, index) => (
                       <div key={question.id}>
                         {renderQuestionInput(question, index)}
-                        
+
                         {errors.answers?.[index]?.value && (
                           <Alert variant="danger" className="py-2 small mb-0">
                             {errors.answers[index]?.value?.message}
@@ -515,8 +515,8 @@ const FormPreview: React.FC = () => {
                     ))}
 
                     <div className="mt-4 pt-4 border-top">
-                   
-                      
+
+
                       <div className="d-flex justify-content-end">
                         <Button
                           variant="primary"

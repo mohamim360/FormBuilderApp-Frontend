@@ -44,7 +44,7 @@ export interface Question {
   isRequired: boolean;
   showInTable: boolean;
   order: number;
-  options: string[];
+  options?: string[];
 }
 
 export interface Tag {

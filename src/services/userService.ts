@@ -115,9 +115,7 @@ export const userService = {
     }
   },
 
-  /**
-   * Block/unblock user (admin only)
-   */
+
 
 };
 
