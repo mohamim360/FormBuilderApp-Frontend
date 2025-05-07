@@ -1,54 +1,133 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# 📋 Forms Web Application
 
-Currently, two official plugins are available:
+A full-featured customizable forms web app built with **React**, **TypeScript**, **Bootstrap**, and **Node.js + PostgreSQL (Prisma)**. Inspired by Google Forms, this app allows users to create, share, and analyze quizzes, tests, surveys.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🔗 Live Demo
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+👉 [Deployed App Link](https://your-deployment-link.com)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+**Supervisor:** *P. Lebedev*
+
+---
+
+## 📌 Features
+
+### ✅ Core Functionality
+
+* 🔐 User Registration and Authentication
+* 🎨 Create customizable templates with:
+
+  * Title, description
+  * Optional image upload (cloud storage)
+  * Tags 
+  * Topic category (from DB)
+  * Access control (public/private)
+  * 📝 Add up to 4 questions per type:
+  * Single-line text
+  * Multi-line text
+  * Positive integers
+  * Checkboxes
+* 🔄 Drag & drop to reorder questions
+* 📥 Users can fill out forms based on templates
+* 👍 Likes
+* 💬 comments
+* 🌍 Full-text search across templates (PostgreSQL)
+* 📱  Design with Bootstrap
+
+### 🛠 Admin Panel
+
+* Manage all users: delete, promote/demote admin
+* Edit any template
+
+### 💡 User Dashboard
+
+* Manage templates (create/edit/delete)
+* Filled forms list
+
+### 📚 Template View
+
+* Tabs:
+
+  * Settings (title, description, image, tags)
+  * Questions
+  * Responses list
+  * Aggregated analysis
+  * Comments 
+  * Fillable by other users (if access allowed)
+  * View other users’ responses (if owner or admin)
+
+---
+Here’s a structured `## Screenshots` section for your `README.md`, describing each UI page with bullet points and placeholder image tags (replace with actual image links or relative paths):
+
+---
+
+## 📸 Screenshots
+
+### 🔐 **Login Page**
+![Login Page](images/lo.PNG)
+
+---
+
+### 📝 **Register Page**
+
+![Register Page](images/re.PNG)
+
+---
+
+### 👤 **Profile Page**
+
+![Profile Page](images/user.PNG)
+
+---
+
+### 🏠 **Home Page**
+
+![Home Page](images/fornt.PNG)
+
+---
+
+### 📄 **Template Page**
+
+![Template Page](images/t.PNG)
+
+---
+
+### 🧾 **Form Fill Page**
+
+![Form Page](images/fo.PNG)
+
+---
+
+### 🔍 **Search Results Page**
+
+![Search Page](images/se.PNG)
+
+---
+
+## 🧰 Tech Stack
+
+### Frontend
+
+* React 19 + TypeScript
+* Vite
+* React Bootstrap
+* Bootstrap 5
+* React Hook Form
+* React Router
+* @hello-pangea/dnd (drag & drop)
+
+---
+
+### 🛠 Environment Variables
+
+Create a `.env` file with the following:
+
+```env
+VITE_BACKEND_URL=https://formbuilderapp-backend-6.onrender.com
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
