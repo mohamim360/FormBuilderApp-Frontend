@@ -5,8 +5,8 @@ A full-featured customizable forms web app built with **React**, **TypeScript**,
 
 ---
 ## Live Demo
-[Server live link](https://formbuilderapp-backend-6.onrender.com)  
-[Client live link](https://form-builder-app-frontend-eta.vercel.app/)
+[Backend live link](https://formbuilderapp-backend-6.onrender.com)  
+[Frontend live link](https://form-builder-app-frontend-eta.vercel.app/)
 
 ## GitHub Repositories
 - Frontend: [https://github.com/mohamim360/FormBuilderApp-Frontend](https://github.com/mohamim360/FormBuilderApp-Frontend)
@@ -124,7 +124,7 @@ Here’s a structured `## Screenshots` section for your `README.md`, describing 
 
 ### 🛠 Environment Variables
 
-Create a `.env` file with the following:
+The following are the necessary ENV variables. `.env`:
 
 ```env
 VITE_BACKEND_URL=https://formbuilderapp-backend-6.onrender.com
