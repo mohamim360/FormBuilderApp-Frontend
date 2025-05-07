@@ -3,14 +3,14 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Template } from '../types/types'
 import { TemplateService } from '../services/templateService'
 import TemplateCard from '../components/TemplateCard'
-import { Button, Spinner, Alert, Container, Row, Col, Form } from 'react-bootstrap'
-import { FaSearch, FaArrowRight, FaTimes } from 'react-icons/fa'
+import { Button, Spinner, Alert, Container, Row, Col} from 'react-bootstrap'
+import {  FaArrowRight } from 'react-icons/fa'
 
 export default function SearchResultsPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const queryParams = new URLSearchParams(location.search)
-  const [searchInput, setSearchInput] = useState(queryParams.get('q') || '')
+ 
   const query = queryParams.get('q') || ''
   
   const [results, setResults] = useState<Template[]>([])
@@ -45,18 +45,7 @@ export default function SearchResultsPage() {
     setPage(prev => prev + 1)
   }
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (searchInput.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchInput.trim())}`)
-      setPage(1) // Reset to first page for new search
-    }
-  }
 
-  const clearSearch = () => {
-    setSearchInput('')
-    navigate('/search')
-  }
 
   if (loading && page === 1) return (
     <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
@@ -81,35 +70,7 @@ export default function SearchResultsPage() {
 
   return (
     <Container className="py-5">
-      {/* Search Header */}
-      <Row className="justify-content-center mb-5">
-        <Col md={8} lg={6}>
-          <Form onSubmit={handleSearchSubmit} className="position-relative">
-            <Form.Control
-              type="search"
-              placeholder="Search templates..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              className="ps-5 py-3 rounded-pill shadow-sm"
-              style={{ border: '1px solid #dee2e6' }}
-            />
-            <FaSearch 
-              className="position-absolute top-50 start-0 translate-middle-y ms-3" 
-              style={{ color: '#6c757d' }}
-            />
-            {searchInput && (
-              <Button
-                variant="link"
-                onClick={clearSearch}
-                className="position-absolute top-50 end-0 translate-middle-y me-3 p-0"
-                style={{ color: '#6c757d' }}
-              >
-                <FaTimes />
-              </Button>
-            )}
-          </Form>
-        </Col>
-      </Row>
+    
 
       {/* Results Header */}
       <Row className="mb-4">

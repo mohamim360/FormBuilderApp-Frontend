@@ -1,17 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Form, Modal, Nav, Spinner } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { AuthService } from "../services/authService";
 import { FaHome } from "react-icons/fa";
 
-
-
 export const Header = () => {
   const { user, loading, logout } = useAuth();
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Clear search on page change unless staying on search page
+  useEffect(() => {
+    if (!location.pathname.startsWith("/search")) {
+      setSearchQuery("");
+    }
+  }, [location]);
 
   const handleSignOut = () => {
     AuthService.logout();
@@ -19,13 +25,14 @@ export const Header = () => {
     setShowProfileModal(false);
     navigate('/login');
   };
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
-  // Generate initials-based avatar if no image URL provided
+
   const getAvatar = () => {
     if (!user) return '';
     if (user.avatarUrl) return user.avatarUrl;
@@ -53,9 +60,7 @@ export const Header = () => {
     <>
       <nav className="navbar bg-body-tertiary navbar-expand-lg">
         <div className="container-fluid">
-          {/* Logo */}
           <Link className="navbar-brand" to="/">
-
             <span className="">FormBuilder</span>
           </Link>
 
@@ -69,9 +74,10 @@ export const Header = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <Button variant="outline-primary" type="submit">
+              <Button variant="outline-primary" type="submit" className="ms-2">
                 Search
               </Button>
+           
             </Form>
           </div>
 
@@ -79,12 +85,11 @@ export const Header = () => {
           <Nav className="align-items-center">
             {user ? (
               <>
-                <Nav.Item className="me-3 ">
- <Link to="/dashboard" className="nav-link">
+                <Nav.Item className="me-3">
+                  <Link to="/dashboard" className="nav-link">
                     <FaHome className="me-1 mb-1" />
                     User Dashboard
                   </Link>
-
                 </Nav.Item>
                 <Nav.Item>
                   <button
@@ -110,7 +115,6 @@ export const Header = () => {
               </Nav.Item>
             )}
           </Nav>
-
         </div>
       </nav>
 

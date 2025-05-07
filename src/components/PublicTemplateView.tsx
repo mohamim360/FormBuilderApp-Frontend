@@ -18,6 +18,7 @@ export default function PublicTemplateView() {
   const [likeCount, setLikeCount] = useState(0)
   const [commentLoading, setCommentLoading] = useState(false)
   const [likeLoading, setLikeLoading] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false);
   const { user } = useAuth()
   const navigate = useNavigate()
 
@@ -56,7 +57,7 @@ export default function PublicTemplateView() {
 
     try {
       setLikeLoading(true)
-      if (isLiked) {
+      if (isLiked && likeCount > 0) {
         await TemplateService.unlikeTemplate(templateId!)
         setLikeCount(prev => prev - 1)
       } else {
@@ -71,7 +72,27 @@ export default function PublicTemplateView() {
       setLikeLoading(false)
     }
   }
+  const handleDelete = async () => {
+    if (!user || !template) return;
 
+    const confirmDelete = window.confirm('Are you sure you want to delete this template? This action cannot be undone.');
+    if (!confirmDelete) return;
+
+    try {
+      setIsDeleting(true);
+      if (template.id) {
+        await TemplateService.deleteTemplate(template.id);
+      } else {
+        throw new Error('Template ID is undefined');
+      }
+      navigate('/template'); // Or wherever you want to redirect after deletion
+    } catch (error) {
+      console.error('Error deleting template:', error);
+
+    } finally {
+      setIsDeleting(false);
+    }
+  };
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user || !comment.trim()) return
@@ -194,13 +215,27 @@ export default function PublicTemplateView() {
 
                 )}
                 {user && (template.author?.id === user.id || user.role === 'ADMIN') && (
-                  <Link to={`/templates/${templateId}/edit`}>  <Button
-                    variant="outline-secondary"
-                    size="lg"
-                  >
-                    Edit Template
-                  </Button></Link>
+                  <>
+                    <Link to={`/templates/${templateId}/edit`}>  <Button
+                      variant="outline-secondary"
+                      size="lg"
+                    >
+                      Edit Template
+                    </Button></Link>
 
+                    <Button
+                      variant="outline-danger"
+                      size="lg"
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                    >
+                      {isDeleting ? (
+                        <Spinner as="span" animation="border" size="sm" />
+                      ) : (
+                        'Delete Template'
+                      )}
+                    </Button>
+                  </>
                 )}
               </div>
             </Card.Body>
