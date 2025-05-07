@@ -1,8 +1,11 @@
 
-# 📋 Forms Web Application
+# 📋 FormBuilder - Web Application
 
 A full-featured customizable forms web app built with **React**, **TypeScript**, **Bootstrap**, and **Node.js + PostgreSQL (Prisma)**. Inspired by Google Forms, this app allows users to create, share, and analyze quizzes, tests, surveys.
 
+![Home Page](images/q.jpeg)
+![Home Page](images/q1.jpeg)
+![Home Page](images/q2.jpeg)
 ---
 ## Live Demo
 [Backend live link](https://formbuilderapp-backend-6.onrender.com)  
@@ -74,7 +77,7 @@ Here’s a structured `## Screenshots` section for your `README.md`, describing 
 
 ### 📝 **Register Page**
 
-![Register Page](images/re.PNG)
+![Register Page](images/re1.PNG)
 
 ---
 
@@ -86,25 +89,25 @@ Here’s a structured `## Screenshots` section for your `README.md`, describing 
 
 ### 🏠 **Home Page**
 
-![Home Page](images/fornt.PNG)
+![Home Page](images/q2.jpeg)
 
 ---
 
 ### 📄 **Template Page**
 
-![Template Page](images/t.PNG)
+![Template Page](images/t11.jpeg)
 
 ---
 
 ### 🧾 **Form Fill Page**
 
-![Form Page](images/fo.PNG)
+![Form Page](images/fo1.jpeg)
 
 ---
 
 ### 🔍 **Search Results Page**
 
-![Search Page](images/se.PNG)
+![Search Page](images/se1.jpeg)
 
 ---
 
@@ -122,6 +125,23 @@ Here’s a structured `## Screenshots` section for your `README.md`, describing 
 
 ---
 
+### Setup the **Frontend**
+
+```bash
+cd ../frontend
+npm install
+npm run dev              # Start frontend on http://localhost:5173
+```
+
+---
+
+## 🔧 Build Commands
+
+### Frontend
+
+```bash
+npm run build    # Builds Vite + TypeScript frontend
+```
 ### 🛠 Environment Variables
 
 The following are the necessary ENV variables. `.env`:
