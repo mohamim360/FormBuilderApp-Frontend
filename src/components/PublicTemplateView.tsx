@@ -155,7 +155,7 @@ export default function PublicTemplateView() {
                   </div>
                 </div>
                 <Button
-                  variant={isLiked ? 'danger' : 'outline-danger'}
+                  variant={isLiked ? 'outline-danger' : 'danger'}
                   onClick={handleLike}
                   disabled={likeLoading}
                 >
@@ -163,7 +163,7 @@ export default function PublicTemplateView() {
                     <Spinner as="span" animation="border" size="sm" />
                   ) : (
                     <>
-                      {isLiked ? <FaHeart /> : <FaRegHeart />}
+                      {isLiked ? <FaRegHeart /> : <FaHeart /> }
                     </>
                   )}
                 </Button>

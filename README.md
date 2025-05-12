@@ -3,11 +3,10 @@
 
 A full-featured customizable forms web app built with **React**, **TypeScript**, **Bootstrap**, and **Node.js + PostgreSQL (Prisma)**. Inspired by Google Forms, this app allows users to create, share, and analyze quizzes, tests, surveys.
 
-![Home Page](images/q.jpeg)
+![Home Page](images/aaa.PNG)
 
-![Home Page](images/q1.jpeg)
+![Home Page](images/aaaaaa.PNG)
 
-![Home Page](images/q2.jpeg)
 ---
 ## Live Demo
 [Backend live link](https://formbuilderapp-backend-6.onrender.com)  
@@ -91,7 +90,7 @@ Here’s a structured `## Screenshots` section for your `README.md`, describing 
 
 ### 🏠 **Home Page**
 
-![Home Page](images/q2.jpeg)
+![Home Page](images/aaa.PNG)
 
 ---
 
