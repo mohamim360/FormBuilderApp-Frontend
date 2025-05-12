@@ -1,4 +1,4 @@
-// src/pages/AdminDashboard.tsx
+
 import React, { useState, useEffect } from 'react';
 import {  Container, Card, Alert, Table, Button, Badge, Modal, Form } from 'react-bootstrap';
 import {  FaTrash, FaEdit } from 'react-icons/fa';

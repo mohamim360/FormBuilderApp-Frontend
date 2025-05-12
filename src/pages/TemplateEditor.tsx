@@ -25,7 +25,7 @@ import { TemplateService } from '../services/templateService';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 
-
+// Define the types for the form data
 type QuestionType = 'SINGLE_LINE_TEXT' | 'MULTI_LINE_TEXT' | 'INTEGER' | 'CHECKBOX' | 'SINGLE_CHOICE';
 type TemplateAccess = 'PUBLIC' | 'RESTRICTED';
 
@@ -58,6 +58,7 @@ interface FormData {
   isPublic: boolean;
 }
 
+// Mock data for demo purposes
 const demoUsers: User[] = [
   { id: '1', name: 'John Doe', email: 'john@example.com' },
   { id: '2', name: 'Jane Smith', email: 'jane@example.com' },
@@ -76,6 +77,7 @@ const TemplateEditor = () => {
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   console.log(user);
+  // Initialize form with react-hook-form
   const { control, register, handleSubmit, watch, setValue, reset } = useForm<FormData>({
     defaultValues: {
       title: '',
@@ -94,7 +96,7 @@ const TemplateEditor = () => {
     control,
     name: 'questions'
   });
-
+  /// Load template data if editing
   useEffect(() => {
     if (id) {
       const loadTemplate = async () => {
@@ -134,7 +136,7 @@ const TemplateEditor = () => {
       loadTemplate();
     }
   }, [id, reset, navigate]);
-
+  // Load template data if editing
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
@@ -174,12 +176,12 @@ const TemplateEditor = () => {
     }
   };
 
-
+  // Handle drag and drop for questions
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     move(result.source.index, result.destination.index);
   };
-
+  // Add a new question
   const addQuestion = (type: QuestionType) => {
     append({
       id: Date.now().toString(),
@@ -193,7 +195,7 @@ const TemplateEditor = () => {
       ...(type === 'SINGLE_CHOICE' && { options: ['Option 1'] })
     });
   };
-
+  // Handle image upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -263,8 +265,8 @@ const TemplateEditor = () => {
           <Card.Header className="d-flex justify-content-between align-items-center">
             <Form.Control
               type="text"
-              placeholder="Form title"
-              className="border-0 fs-4 fw-bold"
+              placeholder="Please enter form title here"
+              className="border-0 fs-4 " 
               {...register('title', { required: 'Title is required' })}
             />
             <div>
@@ -415,7 +417,7 @@ const TemplateEditor = () => {
                   </Dropdown>
                 </div>
               </Tab>
-          
+
             </Tabs>
           </Card.Body>
         </Card>
@@ -477,7 +479,7 @@ const TemplateEditor = () => {
               type="text"
               placeholder="Enter tags separated by commas"
               onChange={handleTagChange}
-              value={watch('tags').join(', ')}
+              value={watch('tags').join(',')}
             />
             <div className="mt-2">
               {watch('tags').map((tag, index) => (
@@ -506,7 +508,7 @@ const TemplateEditor = () => {
           <Form.Group controlId="formAccessType" className="mb-3">
             <Form.Label>Who can fill out this form?</Form.Label>
             <Form.Select {...register('accessType')}>
-              <option value="PUBLIC">Any authenticated user</option>
+              <option value="PUBLIC">Public</option>
               <option value="RESTRICTED">Only specific users</option>
             </Form.Select>
           </Form.Group>

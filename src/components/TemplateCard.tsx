@@ -22,7 +22,7 @@ export default function TemplateCard({ template }: TemplateCardProps) {
       <div className="card-body d-flex flex-column">
         <h5 className="card-title mb-2">
           <Link 
-            to={`/public/${template.id}`} 
+            to={`/${template.id}`} 
             className="text-decoration-none text-dark hover-primary"
           >
             {template.title}

@@ -145,109 +145,111 @@ const TemplateCard = ({ template }: TemplateCardProps) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   return (
-    <Card className="h-100 border-0 shadow-sm">
-      <div className="position-relative" style={{ height: "200px", overflow: "hidden" }}>
-        {template.imageUrl && !imageError ? (
-          <>
-            {imageLoading && (
-              <div className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-light">
-                <Spinner animation="border" size="sm" />
-              </div>
-            )}
-            <Card.Img
-              variant="top"
-              src={template.imageUrl}
-              alt={template.title}
-              style={{
-                height: "100%",
-                width: "100%",
-                objectFit: "cover",
-                display: imageLoading ? "none" : "block"
-              }}
-              onLoad={() => setImageLoading(false)}
-              onError={() => {
-                setImageError(true);
-                setImageLoading(false);
-              }}
-            />
-          </>
-        ) : (
-          <div
-            className="bg-light d-flex align-items-center justify-content-center h-100"
-            style={{ backgroundColor: '#f8f9fa' }}
-          >
-            <div className="text-center p-3">
-              <div className="text-muted mb-2">
-                {imageError ? 'Image failed to load' : 'No preview image'}
-              </div>
-              <div className="text-primary" style={{ fontSize: '2rem' }}>
-                {template.title.charAt(0).toUpperCase()}
+    <Link to={`/${template.id}`} className="text-decoration-none ">
+      <Card className="h-100 border-0 shadow-sm">
+        <div className="position-relative" style={{ height: "200px", overflow: "hidden" }}>
+          {template.imageUrl && !imageError ? (
+            <>
+              {imageLoading && (
+                <div className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                  <Spinner animation="border" size="sm" />
+                </div>
+              )}
+              <Card.Img
+                variant="top"
+                src={template.imageUrl}
+                alt={template.title}
+                style={{
+                  height: "100%",
+                  width: "100%",
+                  objectFit: "cover",
+                  display: imageLoading ? "none" : "block"
+                }}
+                onLoad={() => setImageLoading(false)}
+                onError={() => {
+                  setImageError(true);
+                  setImageLoading(false);
+                }}
+              />
+            </>
+          ) : (
+            <div
+              className="bg-light d-flex align-items-center justify-content-center h-100"
+              style={{ backgroundColor: '#f8f9fa' }}
+            >
+              <div className="text-center p-3">
+                <div className="text-muted mb-2">
+                  {imageError ? 'Image failed to load' : 'No preview image'}
+                </div>
+                <div className="text-primary" style={{ fontSize: '2rem' }}>
+                  {template.title.charAt(0).toUpperCase()}
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
-
-      <Card.Body className="d-flex flex-column">
-        <Card.Title className="h5 mb-2">{template.title}</Card.Title>
-
-        <div className="d-flex align-items-center mb-2 small text-muted">
-          <FaUser className="me-2" />
-          <span>By {template.author?.name || 'Anonymous'}</span>
+          )}
         </div>
 
-        <Card.Text className="flex-grow-1 mb-3">
-          {template.description.length > 100
-            ? `${template.description.substring(0, 100)}...`
-            : template.description}
-        </Card.Text>
+        <Card.Body className="d-flex flex-column">
+          <Card.Title className="h5 mb-2">{template.title}</Card.Title>
 
-        <div className="mb-3">
-          <Badge bg="primary" className="me-2">{template.topic || 'General'}</Badge>
-          {template.tags?.slice(0, 2).map((tag) => (
-            <Badge key={tag.id} bg="light" text="dark" className="me-2">
-              {tag.name}
-            </Badge>
-          ))}
-        </div>
-
-        <div className="d-flex justify-content-between align-items-center">
-          <div>
-            <Badge bg="light" text="dark" className="me-2">
-              <FaStar className="text-warning me-1" />
-              {template._count?.forms || 0} uses
-            </Badge>
-            <Badge bg="light" text="dark">
-              <FaHeart className="text-danger me-1" />
-              {template._count?.likes || 0} likes
-            </Badge>
+          <div className="d-flex align-items-center mb-2 small text-muted">
+            <FaUser className="me-2" />
+            <span>By {template.author?.name || 'Anonymous'}</span>
           </div>
-          <div className="d-flex gap-2">
-            <Link to={`/${template.id}`}>
-              <Button
-                variant="outline-primary"
-                size="sm"
+
+          <Card.Text className="flex-grow-1 mb-3">
+            {template.description.length > 100
+              ? `${template.description.substring(0, 100)}...`
+              : template.description}
+          </Card.Text>
+
+          <div className="mb-3">
+            <Badge bg="primary" className="me-2">{template.topic || 'General'}</Badge>
+            {template.tags?.slice(0, 2).map((tag) => (
+              <Badge key={tag.id} bg="light" text="dark" className="me-2">
+                {tag.name}
+              </Badge>
+            ))}
+          </div>
+
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <Badge bg="light" text="dark" className="me-2">
+                <FaStar className="text-warning me-1" />
+                {template._count?.forms || 0} uses
+              </Badge>
+              <Badge bg="light" text="dark">
+                <FaHeart className="text-danger me-1" />
+                {template._count?.likes || 0} likes
+              </Badge>
+            </div>
+            <div className="d-flex gap-2">
+              <Link to={`/${template.id}`}>
+                <Button
+                  variant="outline-primary"
+                  size="sm"
+                >
+                  <FaEye className="me-1" />
+                  View
+                </Button>
+              </Link>
+
+              <Link
+                to={`/templates/${template.id}`}
+                className="btn btn-primary btn-sm "
               >
-                <FaEye className="me-1" />
-                View
-              </Button>
-            </Link>
+                Response
+              </Link>
+            </div>
 
-            <Link
-              to={`/templates/${template.id}`}
-              className="btn btn-primary btn-sm "
-            >
-              Use Template
-            </Link>
           </div>
+        </Card.Body>
 
-        </div>
-      </Card.Body>
-
-      <Card.Footer className="bg-white border-0 small text-muted">
-        Created {moment(template.createdAt).fromNow()}
-      </Card.Footer>
-    </Card>
+        <Card.Footer className="bg-white border-0 small text-muted">
+          Created {moment(template.createdAt).fromNow()}
+        </Card.Footer>
+      </Card>
+    </Link>
   );
 };
 

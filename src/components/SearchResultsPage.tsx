@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Template } from '../types/types'
 import { TemplateService } from '../services/templateService'
 import TemplateCard from '../components/TemplateCard'
-import { Button, Spinner, Alert, Container, Row, Col} from 'react-bootstrap'
-import {  FaArrowRight } from 'react-icons/fa'
+import { Button, Spinner, Alert, Container, Row, Col } from 'react-bootstrap'
+import { FaArrowRight } from 'react-icons/fa'
 
 export default function SearchResultsPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const queryParams = new URLSearchParams(location.search)
- 
+
   const query = queryParams.get('q') || ''
-  
+
   const [results, setResults] = useState<Template[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -70,7 +70,7 @@ export default function SearchResultsPage() {
 
   return (
     <Container className="py-5">
-    
+
 
       {/* Results Header */}
       <Row className="mb-4">
@@ -97,53 +97,56 @@ export default function SearchResultsPage() {
           <Row xs={1} md={2} lg={3} className="g-4 mb-5">
             {results.map(template => (
               <Col key={template.id}>
+                <Link  to={`/${template.id}`} className="text-decoration-none">
                 <TemplateCard template={template} />
+              </Link>
               </Col>
             ))}
-          </Row>
-
-          {hasMore && (
-            <div className="text-center mt-4">
-              <Button 
-                variant="outline-primary" 
-                onClick={handleLoadMore}
-                disabled={loading}
-                className="px-4 py-2 rounded-pill"
-              >
-                {loading ? (
-                  <>
-                    <Spinner as="span" animation="border" size="sm" className="me-2" />
-                    Loading...
-                  </>
-                ) : (
-                  <>
-                    Load More <FaArrowRight className="ms-2" />
-                  </>
-                )}
-              </Button>
-            </div>
-          )}
-        </>
-      ) : (
-        <Row className="justify-content-center py-5">
-          <Col md={8} className="text-center">
-            <div className="py-5">
-              <h4 className="mb-3">No templates found matching your search</h4>
-              <p className="text-muted mb-4">
-                Try different keywords or browse our popular templates
-              </p>
-              <Button 
-                variant="primary" 
-                size="lg" 
-                className="rounded-pill px-4"
-                onClick={() => navigate('/')}
-              >
-                Explore Templates
-              </Button>
-            </div>
-          </Col>
         </Row>
+
+      {hasMore && (
+        <div className="text-center mt-4">
+          <Button
+            variant="outline-primary"
+            onClick={handleLoadMore}
+            disabled={loading}
+            className="px-4 py-2 rounded-pill"
+          >
+            {loading ? (
+              <>
+                <Spinner as="span" animation="border" size="sm" className="me-2" />
+                Loading...
+              </>
+            ) : (
+              <>
+                Load More <FaArrowRight className="ms-2" />
+              </>
+            )}
+          </Button>
+        </div>
       )}
-    </Container>
+    </>
+  ) : (
+    <Row className="justify-content-center py-5">
+      <Col md={8} className="text-center">
+        <div className="py-5">
+          <h4 className="mb-3">No templates found matching your search</h4>
+          <p className="text-muted mb-4">
+            Try different keywords or browse our popular templates
+          </p>
+          <Button
+            variant="primary"
+            size="lg"
+            className="rounded-pill px-4"
+            onClick={() => navigate('/')}
+          >
+            Explore Templates
+          </Button>
+        </div>
+      </Col>
+    </Row>
+  )
+}
+    </Container >
   )
 }

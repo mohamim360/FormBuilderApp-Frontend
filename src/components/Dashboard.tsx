@@ -163,7 +163,7 @@ const Dashboard = () => {
 										<Col key={template.id}>
 											<Link
 												to={`/${template.id}`}
-
+												className='text-decoration-none'
 											>
 												<TemplateCard template={template} />            </Link>
 
@@ -175,7 +175,7 @@ const Dashboard = () => {
 					)}
 				</Tab>
 
-				<Tab eventKey="forms" title={<><FaList className="me-1" /> My Forms</>}>
+				<Tab eventKey="forms" title={<><FaList className="me-1" /> My Submissions</>}>
 					<FormList />
 				</Tab>
 				{

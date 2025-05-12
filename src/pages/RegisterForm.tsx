@@ -29,7 +29,7 @@ const RegisterForm: React.FC = () => {
     try {
       const { user, token } = await AuthService.register(email, name, password);
       authLogin(user, token);
-      navigate('/dashboard'); // Redirect to dashboard after registration
+      navigate('/dashboard'); 
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || 'Registration failed. Please try again.');

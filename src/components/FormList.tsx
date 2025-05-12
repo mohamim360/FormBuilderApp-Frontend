@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Card, Spinner, Alert, Table, Badge } from 'react-bootstrap';
 import { fetchUserForms } from '../services/formService';
-import { Form , Template } from '../types/types';
+import { Form, Template } from '../types/types';
 import { TemplateService } from '../services/templateService';
 
 interface FormWithMinimalTemplate extends Omit<Form, 'template'> {
@@ -22,7 +22,7 @@ const FormList: React.FC = () => {
       try {
         setLoading(true);
         const rawForms = await fetchUserForms();
-console.log('Fetched forms:', rawForms); // Debugging line
+        console.log('Fetched forms:', rawForms); // Debugging line
         const formsWithTemplates = await Promise.all(
           rawForms.forms.map(async (form: Form) => {
             try {
@@ -82,7 +82,7 @@ console.log('Fetched forms:', rawForms); // Debugging line
     <Container className="my-4">
       <Card>
         <Card.Header className="d-flex justify-content-between align-items-center">
-          <h3>My Forms</h3>
+          <h3>My Submissions</h3>
         </Card.Header>
         <Card.Body>
           {forms.length === 0 ? (

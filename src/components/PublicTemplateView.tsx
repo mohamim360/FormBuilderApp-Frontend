@@ -191,7 +191,7 @@ export default function PublicTemplateView() {
                     variant="primary"
                     size="lg"
                   >
-                    Use this template
+                    Response
                   </Button></Link>
 
                 ) : (
@@ -200,7 +200,7 @@ export default function PublicTemplateView() {
                       variant="primary"
                       size="lg"
                     >
-                      Login to use template
+                      Login to Response
                     </Button>
                   </Link>
 

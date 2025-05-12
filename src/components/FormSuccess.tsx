@@ -37,7 +37,7 @@ const FormSuccess: React.FC = () => {
 
                 className="d-flex align-items-center gap-2"
               >
-                <FaList /> View My Forms
+                <FaList /> View My Submissions
               </Button>
             </Link>
 
