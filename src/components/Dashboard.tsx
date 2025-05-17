@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Tab, Tabs, Container, Card, Spinner, Alert, Row, Col, Image, Badge, Button } from 'react-bootstrap';
-import { FaUser, FaClipboard, FaList, FaPlus, FaUserShield } from 'react-icons/fa';
+import { FaUser, FaClipboard, FaList, FaPlus, FaUserShield, FaSalesforce } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { TemplateService } from '../services/templateService';
@@ -9,6 +9,7 @@ import { Template, Form } from '../types/types';
 import TemplateCard from '../components/TemplateCard';
 import FormList from './FormList';
 import AdminDashboard from './AdminDashboard';
+import SalesforceForm from './SalesforceForm';
 
 const Dashboard = () => {
 	const { user } = useAuth();
@@ -82,49 +83,70 @@ const Dashboard = () => {
 				onSelect={(k) => setActiveTab(k || 'profile')}
 				className="mb-4"
 			>
-				<Tab eventKey="profile" title={<><FaUser className="me-1" /> Profile</>}>
-					{loading.profile ? (
-						<div className="text-center my-5">
-							<Spinner animation="border" />
-						</div>
-					) : error.profile ? (
-						<Alert variant="danger">{error.profile}</Alert>
-					) : (
-						<Card>
-							<Card.Body>
-								<Row>
-									<Col md={4} className="text-center">
-										<Image src={getAvatar()} roundedCircle className="mb-3" width={150} height={150} />
-										<h3>{user?.name}</h3>
-										<p className="text-muted">{user?.email}</p>
-										<Badge bg={user?.role === 'ADMIN' ? 'danger' : 'primary'}>
-											{user?.role}
-										</Badge>
-									</Col>
-									<Col md={8}>
-										<h4>Account Information</h4>
-										<hr />
-										<Row className="mb-3">
-											<Col sm={4} className="fw-bold">Member Since:</Col>
-											<Col sm={8}>
-												{user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
-											</Col>
-										</Row>
-										<Row className="mb-3">
-											<Col sm={4} className="fw-bold">Templates Created:</Col>
-											<Col sm={8}>{templates.length}</Col>
-										</Row>
-										<Row className="mb-3">
-											<Col sm={4} className="fw-bold">Forms Submitted:</Col>
-											<Col sm={8}>{forms.length}</Col>
-										</Row>
-
-									</Col>
-								</Row>
-							</Card.Body>
-						</Card>
-					)}
-				</Tab>
+		<Tab eventKey="profile" title={<><FaUser className="me-1" /> Profile</>}>
+  {loading.profile ? (
+    <div className="text-center my-5">
+      <Spinner animation="border" />
+    </div>
+  ) : error.profile ? (
+    <Alert variant="danger">{error.profile}</Alert>
+  ) : (
+    <Row>
+      <Col md={4}>
+        <Card className="mb-4">
+          <Card.Body className="text-center">
+            <Image src={getAvatar()} roundedCircle className="mb-3" width={150} height={150} />
+            <h3>{user?.name}</h3>
+            <p className="text-muted">{user?.email}</p>
+            <Badge bg={user?.role === 'ADMIN' ? 'danger' : 'primary'}>
+              {user?.role}
+            </Badge>
+          </Card.Body>
+        </Card>
+        
+        <Card>
+          <Card.Body>
+            <h5 className="mb-3">Account Information</h5>
+            <div className="mb-3">
+              <small className="text-muted">Member Since</small>
+              <p>{user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</p>
+            </div>
+            <div className="mb-3">
+              <small className="text-muted">Templates Created</small>
+              <p>{templates.length}</p>
+            </div>
+            <div>
+              <small className="text-muted">Forms Submitted</small>
+              <p>{forms.length}</p>
+            </div>
+          </Card.Body>
+        </Card>
+      </Col>
+      
+      <Col md={8}>
+        <Card className="mb-4">
+          <Card.Body>
+            <div className="d-flex align-items-center mb-3">
+              <FaSalesforce
+							className="text-primary me-2" size={20} />
+              <h5 className="mb-0">Salesforce Integration</h5>
+            </div>
+            <p className="text-muted mb-4">
+              Connect your profile to Salesforce to sync your information.
+            </p>
+            {user && (
+              <SalesforceForm
+                userId={user.id}
+                userName={user.name}
+                userEmail={user.email}
+              />
+            )}
+          </Card.Body>
+        </Card>
+      </Col>
+    </Row>
+  )}
+</Tab>
 
 				<Tab eventKey="templates" title={<><FaClipboard className="me-1" /> My Templates</>}>
 					{loading.templates ? (

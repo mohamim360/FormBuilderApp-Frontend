@@ -16,6 +16,7 @@ import SearchResultsPage from './components/SearchResultsPage'
 import PublicTemplateView from './components/PublicTemplateView'
 import TemplateResponses from './components/TemplateResponses'
 import Dashboard from './components/Dashboard'
+import UserProfile from './components/UserProfile'
 
 
 function App() {
@@ -57,6 +58,7 @@ function App() {
             </PrivateRoute>} />
             <Route path="/templates/:id/edit" element={<PrivateRoute><TemplateEditor /></PrivateRoute>} />
             <Route path="/templates/:templateId/responses" element={<PrivateRoute><TemplateResponses /></PrivateRoute>} />
+            <Route path="/profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
           </Route>
 
           <Route element={<AuthLayout />}>
