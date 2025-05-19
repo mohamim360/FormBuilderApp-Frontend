@@ -17,6 +17,7 @@ import PublicTemplateView from './components/PublicTemplateView'
 import TemplateResponses from './components/TemplateResponses'
 import Dashboard from './components/Dashboard'
 import UserProfile from './components/UserProfile'
+import HelpButton from './components/HelpButton'
 
 
 function App() {
@@ -70,6 +71,7 @@ function App() {
           </Route>
 
         </Routes>
+           <HelpButton />
       </AuthProvider>
 
     </BrowserRouter>

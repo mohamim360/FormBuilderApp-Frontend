@@ -1,4 +1,3 @@
-// UserProfile.tsx
 import SalesforceForm from './SalesforceForm';
 import { useAuth } from '../context/AuthContext';
 
@@ -10,8 +9,6 @@ export default function UserProfile() {
 
   return (
     <div>
-    
-      
  
         <SalesforceForm 
           userId={user.id} 
