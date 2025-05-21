@@ -2,15 +2,18 @@ import { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useLocation } from 'react-router-dom';
 import { uploadSupportTicket } from '../services/ticketService';
 import { useAuth } from '../context/AuthContext';
 import userService from '../services/userService';
 
-const SupportModal = ({ show, handleClose }: any) => {
+interface SupportModalProps {
+  show: boolean;
+  handleClose: () => void;
+}
+
+const SupportModal = ({ show, handleClose }: SupportModalProps) => {
   const [summary, setSummary] = useState('');
   const [priority, setPriority] = useState('Average');
-  const location = useLocation();
   const { user } = useAuth();
  async function getAdminEmails(): Promise<string[]> {
   try {
@@ -26,7 +29,7 @@ const SupportModal = ({ show, handleClose }: any) => {
   const handleSubmit = async () => {
 		 const adminEmails = await getAdminEmails();
     const ticket = {
-      reportedBy: user.email,
+      reportedBy: user?.email,
       template: document.title || 'N/A',
       link: window.location.href,
       summary,
