@@ -1,0 +1,38 @@
+services:
+  backend:
+    image: mehedihasan11/formbuilderapp-backend:latest  
+    env_file:
+      - ./backend/.env
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  frontend:
+    image: mehedihasan11/formbuilderapp-frontend:latest
+    env_file:
+      - ./frontend/.env
+    ports:
+      - "5173:5173"
+    networks:
+      - app-network
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ham20ham20
+      POSTGRES_DB: formbuilder
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
